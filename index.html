@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Mohamed Ayad — Flutter Developer</title>
+<meta name="description" content="Mobile Application Developer specialising in Flutter and Dart. Enterprise production apps, Clean Architecture, and a cybersecurity background."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F1; --card:#FFFFFF; --ink:#0F1518; --muted:#5D6B72;
+  --rule:#DBE1E0; --rule-soft:#E7EBEA;
+  --accent:#0F6E8C; --accent-soft:#0F6E8C1a;
+  --warm:#B4501F; --warm-soft:#B4501F14;
+  --code-bg:#0F1518; --code-ink:#D6E3E7;
+  --shadow:0 1px 2px rgba(15,21,24,.05), 0 8px 24px -12px rgba(15,21,24,.18);
+  --sans:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,"Cascadia Mono",monospace;
+}
+html[data-theme="dark"]{
+  --paper:#0B1013; --card:#121A1E; --ink:#E9EFF1; --muted:#8C9BA2;
+  --rule:#212C31; --rule-soft:#1A2429;
+  --accent:#48AECC; --accent-soft:#48AECC1f;
+  --warm:#E58353; --warm-soft:#E5835318;
+  --code-bg:#080D10; --code-ink:#C9DAE0;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+::selection{background:var(--accent); color:#fff}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+/* ---------- shell ---------- */
+.shell{display:grid; grid-template-columns:290px 1fr; min-height:100vh; max-width:1360px; margin:0 auto}
+
+/* ---------- rail ---------- */
+.rail{
+  position:sticky; top:0; height:100vh; padding:44px 34px 30px;
+  border-right:1px solid var(--rule); display:flex; flex-direction:column; gap:26px;
+  background:var(--paper);
+}
+.mark{
+  width:44px;height:44px;border-radius:10px;background:var(--ink);color:var(--paper);
+  display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:15px;
+  letter-spacing:-.5px;
+}
+.rail h1{font-size:23px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.4px}
+.rail .role{
+  font-family:var(--mono);font-size:11.5px;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.9px;margin-top:7px;font-weight:500
+}
+nav{display:flex;flex-direction:column;gap:1px;margin-top:2px}
+nav a{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:7px 0 7px 16px;position:relative;
+  border-left:2px solid transparent;transition:color .16s,border-color .16s
+}
+nav a::before{
+  content:"";position:absolute;left:-1px;top:50%;width:0;height:1px;background:var(--accent);
+  transition:width .2s
+}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--accent);border-left-color:var(--accent)}
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+.contact{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.contact a{color:var(--muted);text-decoration:none;word-break:break-all;transition:color .16s}
+.contact a:hover{color:var(--accent)}
+.toggle{
+  align-self:flex-start;background:none;border:1px solid var(--rule);color:var(--muted);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;
+  padding:7px 11px;border-radius:6px;cursor:pointer;transition:border-color .16s,color .16s
+}
+.toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- main ---------- */
+main{padding:0 0 90px}
+section{padding:64px 56px;border-bottom:1px solid var(--rule-soft);scroll-margin-top:0}
+section:last-child{border-bottom:0}
+.label{
+  font-family:var(--mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--muted);margin:0 0 22px;display:flex;align-items:center;gap:12px
+}
+.label::after{content:"";flex:1;height:1px;background:var(--rule)}
+h2{font-size:27px;line-height:1.25;margin:0 0 16px;font-weight:700;letter-spacing:-.5px}
+h3{font-size:17px;margin:0;font-weight:600;letter-spacing:-.2px}
+p{margin:0 0 15px;max-width:66ch;color:var(--ink)}
+p.lead{font-size:17.5px;line-height:1.62;color:var(--ink)}
+.dim{color:var(--muted)}
+
+/* ---------- hero ---------- */
+.hero{padding-top:88px}
+.hero .kicker{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--accent);margin-bottom:20px
+}
+.hero h2{font-size:clamp(32px,4.6vw,52px);line-height:1.08;letter-spacing:-1.6px;margin-bottom:22px;max-width:16ch}
+.hero h2 em{font-style:normal;color:var(--accent)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:38px 0 6px;border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--card)}
+.duo>div{padding:22px 24px}
+.duo>div+div{border-left:1px solid var(--rule)}
+.duo .t{font-family:var(--mono);font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;margin-bottom:9px}
+.duo .build .t{color:var(--accent)}
+.duo .break .t{color:var(--warm)}
+.duo p{margin:0;font-size:14.5px;line-height:1.55;color:var(--muted)}
+.stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:34px}
+.stat .n{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-1px;color:var(--ink)}
+.stat .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* ---------- skills ---------- */
+.skills{display:grid;gap:0;border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--card)}
+.srow{display:grid;grid-template-columns:180px 1fr;gap:20px;padding:16px 22px;align-items:start}
+.srow+.srow{border-top:1px solid var(--rule-soft)}
+.srow dt{font-family:var(--mono);font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);padding-top:4px}
+.srow dd{margin:0;display:flex;flex-wrap:wrap;gap:7px}
+.tag{
+  font-family:var(--mono);font-size:11.5px;padding:4px 9px;border-radius:5px;
+  background:var(--paper);border:1px solid var(--rule);color:var(--ink);white-space:nowrap
+}
+
+/* ---------- experience ---------- */
+.job{border-left:2px solid var(--accent);padding-left:24px}
+.job .top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.job .when{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+ul.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;max-width:76ch}
+ul.pts li{position:relative;padding-left:20px;color:var(--muted);font-size:15px}
+ul.pts li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:1.5px;background:var(--accent)}
+ul.pts li strong{color:var(--ink);font-weight:600}
+
+/* ---------- projects ---------- */
+.projects{display:flex;flex-direction:column;gap:16px}
+.proj{
+  background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:24px 26px;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
+}
+.proj:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}
+.proj .head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.proj .kind{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:20px;white-space:nowrap
+}
+.proj .stack{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:9px 0 15px}
+.proj ul.pts li{font-size:14.5px}
+
+/* ---------- security ---------- */
+.sec{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sec .card{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:24px 26px}
+.sec .card.warm{border-color:var(--warm);background:var(--warm-soft)}
+.sec h3{margin-bottom:10px}
+.sec p{font-size:14.5px;color:var(--muted);margin:0}
+
+/* ---------- education ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.edu .school{font-weight:600;font-size:16.5px}
+.edu .detail{color:var(--muted);font-size:14.5px;margin-top:4px}
+ul.certs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.certs li{
+  display:flex;gap:12px;align-items:baseline;font-size:14.5px;color:var(--ink);
+  padding-bottom:10px;border-bottom:1px solid var(--rule-soft)
+}
+ul.certs li:last-child{border-bottom:0;padding-bottom:0}
+ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-left:auto;white-space:nowrap}
+
+/* ---------- contact ---------- */
+.cta{background:var(--code-bg);color:var(--code-ink);border-radius:14px;padding:44px 46px}
+.cta h2{color:#fff;margin-bottom:12px}
+.cta p{color:#9FB2B9;max-width:56ch}
+.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.links a{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.4px;text-decoration:none;
+  padding:11px 18px;border-radius:8px;border:1px solid #2A3940;color:#D6E3E7;
+  transition:background .16s,border-color .16s,color .16s
+}
+.links a:hover{background:#1B262B;border-color:var(--accent);color:#fff}
+.links a.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.links a.primary:hover{filter:brightness(1.12)}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+  .proj{transition:none}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:940px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:30px 26px}
+  nav{flex-direction:row;flex-wrap:wrap;gap:4px 6px}
+  nav a{border-left:0;border-bottom:2px solid transparent;padding:5px 9px}
+  nav a.on{border-left:0;border-bottom-color:var(--accent)}
+  .rail-foot{margin-top:18px}
+  section{padding:44px 26px}
+  .hero{padding-top:44px}
+  .duo,.sec,.two{grid-template-columns:1fr}
+  .duo>div+div{border-left:0;border-top:1px solid var(--rule)}
+  .srow{grid-template-columns:1fr;gap:10px}
+  .cta{padding:32px 26px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="mark">MA</div>
+    <div>
+      <h1>Mohamed Ayad</h1>
+      <div class="role">Flutter &amp; Dart Developer</div>
+    </div>
+    <nav id="nav">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#security">Cloud &amp; Security</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="rail-foot">
+      <div class="contact">
+        <a href="mailto:mohamedezatayad2005@gmail.com">mohamedezatayad2005@gmail.com</a>
+        <a href="tel:+201127902941">+20 112 790 2941</a>
+        <a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">linkedin.com/in/mohamedayad14</a>
+        <a href="https://github.com/memo410/memo410" target="_blank" rel="noopener noreferrer">github.com/memo410</a>
+      </div>
+      <button class="toggle" id="themeBtn" type="button" aria-label="Switch colour theme">Dark mode</button>
+    </div>
+  </aside>
+
+  <main>
+
+    <section class="hero" id="about">
+      <div class="kicker">Mobile Application Developer</div>
+      <h2 class="rv">I build production apps — and I know how they <em>break</em>.</h2>
+      <p class="lead rv">Three-plus years building and maintaining large-scale Flutter applications for enterprise clients: Clean Architecture, BLoC/Cubit, REST and WebSocket integration, role-based access control, and full Arabic/English localisation with RTL support.</p>
+      <p class="lead dim rv">A background in Cybersecurity Engineering and AWS infrastructure, alongside active bug bounty practice, brings a security-first perspective to authentication, authorisation and data handling across the whole development lifecycle.</p>
+
+      <div class="duo rv">
+        <div class="build">
+          <div class="t">Build</div>
+          <p>Enterprise Flutter apps shipped to production — workforce management, property and finance platforms, real-time AI assistants, travel planning.</p>
+        </div>
+        <div class="break">
+          <div class="t">Break</div>
+          <p>Bug bounty hunting on HackerOne and YesWeHack, finding and reporting vulnerabilities in live production applications.</p>
+        </div>
+      </div>
+
+      <div class="stats rv">
+        <div class="stat"><div class="n">3+</div><div class="l">Years Flutter</div></div>
+        <div class="stat"><div class="n">7</div><div class="l">Shipped projects</div></div>
+        <div class="stat"><div class="n">EN / AR</div><div class="l">Full RTL support</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">Certifications</div></div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <p class="label">Technical Skills</p>
+      <dl class="skills rv">
+        <div class="srow">
+          <dt>Mobile</dt>
+          <dd>
+            <span class="tag">Flutter</span><span class="tag">Dart</span><span class="tag">Clean Architecture</span>
+            <span class="tag">MVVM</span><span class="tag">Responsive &amp; adaptive UI</span>
+            <span class="tag">i18n (EN/AR, RTL)</span>
+          </dd>
+        </div>
+        <div class="srow">
+          <dt>State &amp; Data</dt>
+          <dd>
+            <span class="tag">BLoC / Cubit</span><span class="tag">Hydrated BLoC</span><span class="tag">Provider</span>
+            <span class="tag">get_it</span><span class="tag">Dio</span><span class="tag">Retrofit</span>
+            <span class="tag">Functional error handling</span>
+          </dd>
+        </div>
+        <div class="srow">
+          <dt>Real-Time</dt>
+          <dd>
+            <span class="tag">Socket.IO</span><span class="tag">WebSockets</span>
+            <span class="tag">Firebase Cloud Messaging</span><span class="tag">Push deep linking</span>
+          </dd>
+        </div>
+        <div class="srow">
+          <dt>Backend &amp; Cloud</dt>
+          <dd>
+            <span class="tag">Node.js</span><span class="tag">RESTful APIs</span><span class="tag">Firebase</span>
+            <span class="tag">MySQL</span><span class="tag">AWS EC2</span><span class="tag">VPC</span><span class="tag">S3</span>
+          </dd>
+        </div>
+        <div class="srow">
+          <dt>Cybersecurity</dt>
+          <dd>
+            <span class="tag">Penetration testing</span><span class="tag">Bug bounty</span>
+            <span class="tag">HackerOne</span><span class="tag">YesWeHack</span>
+            <span class="tag">Network security</span><span class="tag">Kali Linux</span>
+          </dd>
+        </div>
+        <div class="srow">
+          <dt>Languages</dt>
+          <dd>
+            <span class="tag">Dart</span><span class="tag">C++</span><span class="tag">Python</span><span class="tag">JavaScript</span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section id="experience">
+      <p class="label">Professional Experience</p>
+      <div class="job rv">
+        <div class="top">
+          <h3>Application Development Intern — Instant</h3>
+          <span class="when">2023 – 2024</span>
+        </div>
+        <ul class="pts">
+          <li>Developed and deployed feature-rich <strong>cross-platform mobile applications</strong> using Flutter, ensuring compatibility across iOS and Android.</li>
+          <li>Integrated secure backend systems, REST APIs and Firebase services to manage <strong>authentication, databases and real-time application state</strong>.</li>
+          <li>Collaborated within a development team to translate complex business requirements into scalable, real-world mobile solutions.</li>
+          <li>Optimised UI/UX components and navigation flows, improving user engagement and delivering a fluid, responsive experience.</li>
+          <li>Integrated third-party SDKs and libraries to extend application capabilities without compromising performance.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="projects">
+      <p class="label">Key Projects</p>
+      <div class="projects">
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>My Teams — Workforce &amp; Operations Management</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · BLoC/Cubit · Clean Architecture · Dio · Retrofit · Firebase Cloud Messaging</div>
+          <ul class="pts">
+            <li>Built an enterprise staff management application covering HR and daily operations: <strong>performance evaluations (KPIs)</strong>, leave management, disciplinary records, employee directories and HR documents.</li>
+            <li>Developed operational modules for housekeeping, food &amp; beverage, <strong>maintenance ticketing with SLA tracking and escalation</strong>, fleet and driver management, inventory and task assignment.</li>
+            <li>Implemented a <strong>role-based permission system</strong> across multiple user roles and action types, enforced in both the interface and the business logic layer.</li>
+            <li>Delivered analytics dashboards with interactive charts, Excel import/export and PDF report generation.</li>
+            <li>Shipped separate administrator and employee experiences from a shared codebase, fully localised in English and Arabic with right-to-left support.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>Real Estate — Property Management Platform</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · BLoC/Cubit · Clean Architecture · Socket.IO · REST APIs</div>
+          <ul class="pts">
+            <li>Developed a property management application handling <strong>tenancy contracts</strong>, unit and building records, cheque registries, returned cheques and security deposits.</li>
+            <li>Implemented financial workflows including payment plans, receipt vouchers, rent increment notices, non-renewal processing and <strong>legal case tracking</strong>.</li>
+            <li>Integrated an <strong>AI-assisted cheque scanner</strong> for automated data capture and validation, reducing manual entry for finance teams.</li>
+            <li>Built a real-time AI assistant over Socket.IO featuring <strong>streamed responses and tool-approval flows</strong>.</li>
+            <li>Created document expiry monitoring, automated email notification workflows and executive reporting dashboards.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>My Trips — Travel Planning Application</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · BLoC/Cubit · Socket.IO · Google Maps · Firebase</div>
+          <ul class="pts">
+            <li>Built a travel planning application managing trips, flights, hotels, restaurants, activities and transportation within a <strong>unified itinerary</strong>.</li>
+            <li>Implemented <strong>real-time group chat</strong> over Socket.IO with push notifications and deep linking into relevant trip content.</li>
+            <li>Integrated maps and location services for place discovery, timezone handling and saved-place libraries.</li>
+            <li>Developed shared trip access and permissions so travel crews and administrators could collaborate on the same itinerary.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>Omni Agent — AI-Powered Multi-Modal Assistant</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · Clean Architecture · REST APIs · WebSockets</div>
+          <ul class="pts">
+            <li>Architected a scalable mobile application using <strong>Clean Architecture</strong> principles to ensure modularity and long-term maintainability.</li>
+            <li>Integrated AI agents through REST APIs and established <strong>low-latency, bidirectional data pipelines</strong> using WebSockets for real-time media generation and AI responses.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>Nada City — City Services Application</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · BLoC · Modular architecture</div>
+          <ul class="pts">
+            <li>Developed a city services platform delivering both a <strong>public user application and an administrative console</strong> from a single shared codebase.</li>
+            <li>Structured the project into independent feature modules with shared models, networking and design system components.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>Pet Adoption Platform</h3>
+            <span class="kind">Full-stack</span>
+          </div>
+          <div class="stack">Flutter · MVVM · Node.js · MySQL</div>
+          <ul class="pts">
+            <li>Engineered a full-stack ecosystem featuring a responsive Flutter frontend using the <strong>MVVM pattern</strong> for clean UI logic separation.</li>
+            <li>Developed a Node.js backend with a centralised MySQL database to securely manage user profiles, pet data and adoption requests.</li>
+          </ul>
+        </article>
+
+        <article class="proj rv">
+          <div class="head">
+            <h3>Hospital Management System</h3>
+            <span class="kind">Flutter</span>
+          </div>
+          <div class="stack">Flutter · MVVM · API integration</div>
+          <ul class="pts">
+            <li>Developed a cross-platform application to digitise and streamline administrative and medical workflows.</li>
+            <li>Implemented MVVM architecture and third-party API integrations to ensure reliable, <strong>role-based access to sensitive healthcare data</strong>.</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="security">
+      <p class="label">Cloud Architecture &amp; Security</p>
+      <div class="sec">
+        <div class="card rv">
+          <h3>AWS Cloud Infrastructure</h3>
+          <p>Designed and optimised cloud computing and storage solutions on AWS, focusing on high availability, VPC design and S3 scalability to support mobile backends.</p>
+        </div>
+        <div class="card warm rv">
+          <h3>Vulnerability Research</h3>
+          <p>Active participant in bug bounty programmes on HackerOne and YesWeHack — identifying and reporting security vulnerabilities in production applications using offensive security techniques.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="education">
+      <p class="label">Education &amp; Certifications</p>
+      <div class="two">
+        <div class="edu rv">
+          <h3 style="margin-bottom:14px">Education</h3>
+          <div class="school">Menoufia University</div>
+          <div class="detail">Faculty of Electronic Engineering — Computer Science Engineering</div>
+          <div class="detail">Focus on Cybersecurity Engineering &amp; Electronics</div>
+        </div>
+        <div class="rv">
+          <h3 style="margin-bottom:14px">Certifications</h3>
+          <ul class="certs">
+            <li>Flutter Diploma <span class="by">Instant</span></li>
+            <li>AWS Cloud Practitioner Essentials <span class="by">AWS</span></li>
+            <li>Big Data Analytics <span class="by">Huawei</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="cta rv">
+        <h2>Let's build something.</h2>
+        <p>Open to Flutter and mobile engineering roles. Happy to talk about architecture, real-time systems, localisation, or where your app might be leaking.</p>
+        <div class="links">
+          <a class="primary" href="mailto:mohamedezatayad2005@gmail.com">Email me</a>
+          <a href="tel:+201127902941">+20 112 790 2941</a>
+          <a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/memo410/memo410" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  var btn  = document.getElementById('themeBtn');
+
+  function apply(t){
+    root.setAttribute('data-theme', t);
+    btn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+    try { localStorage.setItem('ma-theme', t); } catch(e){}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('ma-theme'); } catch(e){}
+  if (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) saved = 'dark';
+  apply(saved || 'light');
+  btn.addEventListener('click', function(){
+    apply(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // scroll reveal
+  var items = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.05});
+    items.forEach(function(el, i){ el.style.transitionDelay = Math.min(i%6*55,220)+'ms'; io.observe(el); });
+  } else {
+    items.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // scroll spy
+  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var secs  = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function spy(){
+    var y = window.scrollY + window.innerHeight*0.28, best = 0;
+    secs.forEach(function(s,i){ if (s && s.offsetTop <= y) best = i; });
+    links.forEach(function(a,i){ a.classList.toggle('on', i === best); });
+  }
+  window.addEventListener('scroll', spy, {passive:true});
+  window.addEventListener('resize', spy);
+  spy();
+})();
+</script>
+</body>
+</html>
