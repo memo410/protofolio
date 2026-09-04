@@ -4,7 +4,21 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Mohamed Ayad — Flutter Developer</title>
-<meta name="description" content="Mobile Application Developer specialising in Flutter and Dart. Enterprise production apps, Clean Architecture, and a cybersecurity background."/>
+<meta name="description" content="Mohamed Ayad - Mobile Application Developer specialising in Flutter and Dart. Enterprise production apps, Clean Architecture, and a cybersecurity background."/>
+<meta name="author" content="Mohamed Ayad"/>
+<meta property="og:type" content="profile"/>
+<meta property="og:title" content="Mohamed Ayad - Flutter Developer"/>
+<meta property="og:description" content="Three-plus years building production Flutter applications for enterprise clients, with a cybersecurity engineering background."/>
+<meta property="og:url" content="https://memo410.github.io"/>
+<meta name="twitter:card" content="summary"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F1518'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='600' fill='%23EEF1F1' text-anchor='middle'%3EMA%3C/text%3E%3C/svg%3E"/>
+<script>
+/* Resolve the stored theme BEFORE first paint. Read-only on localStorage,
+   so the 'ma-theme' write contract stays owned by the bottom script. */
+(function(){var e=document.documentElement,t=null;try{t=localStorage.getItem('ma-theme')}catch(x){}
+if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)t='dark';
+e.setAttribute('data-theme',t==='dark'?'dark':'light')})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,6 +49,7 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 a{color:inherit}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 ::selection{background:var(--accent); color:#fff}
 :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
 
@@ -182,15 +197,6 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
 .links a.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
 .links a.primary:hover{filter:brightness(1.12)}
 
-/* ---------- reveal ---------- */
-.rv{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
-.rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){
-  .rv{opacity:1;transform:none;transition:none}
-  html{scroll-behavior:auto}
-  .proj{transition:none}
-}
-
 /* ---------- responsive ---------- */
 @media (max-width:940px){
   .shell{grid-template-columns:1fr}
@@ -206,18 +212,990 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
   .srow{grid-template-columns:1fr;gap:10px}
   .cta{padding:32px 26px}
 }
+/* ══════════════════════════════════════════════════════════════════════
+   LIVE · hero-identity        everything scoped to  mah-*  /  --mah-*
+   ( "mah" = Mohamed-Ayad-Hero; deliberately NOT the shared "ma-" prefix,
+     which six sibling dimensions are also using. )
+
+   MOTION GRAMMAR
+     mono labels          WIPE left→right   (kicker, role, BUILD/BREAK)
+     headings             MASK-REVEAL up    (name, every word of the h2)
+     prose & panels       RISE
+
+   RULES THIS BLOCK OBEYS
+     · Every animation is fill-mode BACKWARDS — never forwards/both.
+       The resting state of every element is its own untouched natural
+       state, so `animation:none` (reduced motion, an old engine, a
+       stylesheet that half-loads) leaves the page simply CORRECT, never
+       blank. Nothing here can trap content invisible.
+     · Shared elements are moved with the INDIVIDUAL `translate`/`scale`
+       properties, never `transform`. Composite order is
+       translate→rotate→scale→transform, so a tilt/parallax `transform`
+       from another dimension composes instead of overwriting. Engines
+       without individual properties still animate opacity: a plain fade.
+     · `transform` appears only on two pseudo-elements this dimension
+       wholly owns.
+     · No rAF anywhere. One self-scheduling setTimeout for the clock.
+   Full sequence: 0 → ~0.92s.
+   ══════════════════════════════════════════════════════════════════════ */
+:root{
+  --mah-ease:cubic-bezier(.22,.61,.24,1);   /* rise / prose  */
+  --mah-mask:cubic-bezier(.16,.84,.34,1);   /* wipe / reveal */
+}
+
+/* ---------- keyframes ---------- */
+@keyframes mah-up{
+  from{opacity:0;translate:0 9px}
+  to  {opacity:1;translate:none}
+}
+@keyframes mah-wipe{
+  from{clip-path:inset(0 100% 0 -.12em)}
+  to  {clip-path:inset(0 -.32em 0 -.12em)}
+}
+@keyframes mah-reveal{
+  from{clip-path:inset(-.32em -.1em 100% -.1em);translate:0 .3em}
+  to  {clip-path:inset(-.32em -.1em -.3em -.1em);translate:none}
+}
+@keyframes mah-nav{
+  from{opacity:0;translate:-7px 0}
+  to  {opacity:1;translate:none}
+}
+@keyframes mah-stamp{
+  from{opacity:0;translate:0 6px;scale:.9}
+  to  {opacity:1;translate:none;scale:1}
+}
+@keyframes mah-line{from{transform:scaleX(0)}}   /* implicit to = scaleX(1) */
+@keyframes mah-pulse{
+  0%  {opacity:.5;transform:scale(1)}
+  70% {opacity:0}
+  100%{opacity:0;transform:scale(2.6)}
+}
+
+/* generic rise; per-element delay via --mah-d (inline style) */
+.mah-rise{
+  animation:mah-up .44s var(--mah-ease) backwards;
+  animation-delay:var(--mah-d,0s)
+}
+
+/* ══════════════ RAIL — identity ══════════════ */
+
+/* Existing-selector fix, desktop only. .rail is height:100vh with no
+   overflow; on a ~640px-tall laptop viewport the theme toggle already
+   sits close to the edge, and the colophon line below pushes it over.
+   auto = a scrollbar only when one is actually needed. */
+@media (min-width:941px){
+  .rail{overflow-y:auto;overscroll-behavior:contain}
+}
+
+.mah-mark{animation:mah-stamp .48s var(--mah-ease) backwards}
+
+.mah-h1{animation:mah-reveal .46s var(--mah-mask) .06s backwards}
+
+.mah-role{
+  width:max-content;max-width:100%;
+  animation:mah-wipe .44s var(--mah-mask) .12s backwards
+}
+
+/* nav links stagger in behind the identity block */
+.mah-nav a{
+  animation:mah-nav .34s var(--mah-ease) backwards;
+  animation-delay:calc(.16s + var(--mah-k,0)*.026s)
+}
+.mah-nav a:nth-child(1){--mah-k:0}
+.mah-nav a:nth-child(2){--mah-k:1}
+.mah-nav a:nth-child(3){--mah-k:2}
+.mah-nav a:nth-child(4){--mah-k:3}
+.mah-nav a:nth-child(5){--mah-k:4}
+.mah-nav a:nth-child(6){--mah-k:5}
+.mah-nav a:nth-child(7){--mah-k:6}
+
+.mah-foot{animation:mah-up .44s var(--mah-ease) .28s backwards}
+
+/* colophon: status + live Cairo time, one mono rule.
+   Speaks the same small-caps label language as .label / .stat .l . */
+.mah-live{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--muted);
+  padding-top:11px;border-top:1px solid var(--rule-soft)
+}
+.mah-dot{
+  position:relative;flex:none;width:6px;height:6px;
+  border-radius:50%;background:var(--accent)
+}
+.mah-dot::after{                       /* the one ambient loop in this block */
+  content:"";position:absolute;left:0;top:0;right:0;bottom:0;
+  border-radius:50%;background:var(--accent);
+  opacity:0;pointer-events:none;
+  animation:mah-pulse 3s ease-out 1.1s infinite
+}
+/* clock is revealed by JS only once Intl proves it resolved Africa/Cairo */
+.mah-now{margin-left:auto;display:flex;align-items:baseline;gap:6px}
+.mah-now[hidden]{display:none}
+.mah-tz{opacity:.75}
+.mah-t{color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.mah-sec{color:var(--muted)}
+
+/* single gate: pauses every looping animation in this dimension */
+html.mah-still .mah-dot::after{animation-play-state:paused}
+
+/* ══════════════ HERO — load choreography ══════════════ */
+.mah-kick{
+  width:max-content;max-width:100%;
+  animation:mah-wipe .44s var(--mah-mask) .03s backwards
+}
+
+/* words are pre-split in the markup: the reveal is pure CSS, there is no
+   splitting script to fail, and the accessible name is unchanged. */
+.mah-h2 .mah-w{
+  display:inline-block;
+  animation:mah-reveal .42s var(--mah-mask) backwards;
+  animation-delay:calc(.09s + var(--mah-i,0)*.016s)
+}
+.mah-em{position:relative}
+.mah-em::after{                        /* hairline drawn under "break" */
+  content:"";position:absolute;left:0;right:0;bottom:-.1em;
+  height:.05em;min-height:1.5px;border-radius:1px;
+  background:var(--accent);opacity:.35;
+  transform-origin:0 50%;pointer-events:none;
+  animation:mah-line .34s var(--mah-ease) .58s backwards
+}
+
+.mah-duo .t{
+  width:max-content;max-width:100%;
+  animation:mah-wipe .34s var(--mah-mask) .44s backwards
+}
+.mah-duo>div+div .t{animation-delay:.5s}
+
+/* ══════════════ responsive (rail → top bar) ══════════════ */
+@media (max-width:940px){
+  .mah-live{padding-top:10px}
+  .mah-nav a{animation-delay:calc(.14s + var(--mah-k,0)*.018s)}
+}
+
+/* ══════════════ reduced motion ══════════════
+   Every animation fills BACKWARDS, so removing them returns each element
+   to its natural, fully visible, untransformed state: no clip-path, no
+   translate, opacity 1, the pulse ring resting at opacity 0, the hairline
+   under "break" resting at scaleX(1). JS additionally never starts the
+   second-hand tick and sets html.mah-still as a second line of defence. */
+@media (prefers-reduced-motion:reduce){
+  .mah-mark,.mah-h1,.mah-role,.mah-nav a,.mah-foot,
+  .mah-dot::after,.mah-kick,.mah-h2 .mah-w,.mah-em::after,
+  .mah-rise,.mah-duo .t{animation:none!important}
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   COVER · PROVENANCE · FOOTER            namespace: cover- / cv- / free
+   Appended AFTER hero-identity so the two `--mah-i` delay overrides below
+   win on source order (equal specificity, deliberately).
+
+   Contracts honoured: no transform/filter on html|body (ambient's fixed
+   layer); no z-index; no new fixed element; no --amb-/--sx-/--nt-/--crd-
+   name; `transform` on .proj/.tag/#nav a/.links a/.contact a/.toggle is
+   left to the dimensions that own them. Shared elements move with the
+   individual `translate` property, never `transform`.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* the rail name is no longer the document <h1> — the cover owns it now */
+.rail .rail-name{font-size:23px;line-height:1.2;font-weight:700;letter-spacing:-.4px}
+
+/* ---------- cover ---------- */
+.cover-name{
+  font-size:clamp(38px,6.4vw,72px);line-height:.98;letter-spacing:-2.4px;
+  font-weight:700;margin:0 0 15px;max-width:12ch
+}
+.cover-name .cw{
+  display:inline-block;
+  animation:mah-reveal .5s var(--mah-mask) backwards;
+  animation-delay:calc(.04s + var(--cv-i,0)*.055s)
+}
+.cv-dot{color:var(--accent)}
+
+.cover-meta{
+  display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--muted);margin:0 0 30px
+}
+.cv-sep{flex:none;width:4px;height:4px;border-radius:50%;background:var(--rule)}
+
+/* the statement headline now follows the name, so it starts later and
+   sits a step down in the type scale */
+.hero .cover-claim{font-size:clamp(23px,2.7vw,32px);line-height:1.2;letter-spacing:-.7px;max-width:21ch}
+.cover-claim .mah-w{animation-delay:calc(.2s + var(--mah-i,0)*.014s)}
+.cover-claim .mah-em::after{animation-delay:.62s}
+.mah-duo .t{animation-delay:.56s}
+.mah-duo>div+div .t{animation-delay:.6s}
+
+/* ---------- project provenance ---------- */
+.proj-note{
+  display:flex;gap:11px;align-items:stretch;
+  font-family:var(--mono);font-size:11.5px;line-height:1.65;
+  color:var(--muted);margin:-6px 0 20px;max-width:74ch
+}
+.proj-note::before{content:"";flex:none;width:2px;background:var(--rule);border-radius:1px}
+
+.badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.nda{
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--rule);padding:3px 10px;border-radius:20px
+}
+.nda::before{
+  content:"";flex:none;width:6px;height:5px;border-radius:1px;
+  border:1px solid currentColor;border-bottom-width:3px;opacity:.7
+}
+
+.store{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;text-decoration:none;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--warm);background:var(--warm-soft);
+  border:1px solid transparent;padding:3px 10px;border-radius:20px;
+  transition:border-color .22s ease,background-color .22s ease
+}
+.store:hover{border-color:var(--warm)}
+.store .cv-arw{transition:translate .22s var(--mah-ease,ease)}
+.store:hover .cv-arw{translate:2px -2px}
+
+/* ---------- footer ---------- */
+.foot{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:30px 56px 0;font-family:var(--mono);font-size:11px;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--muted)
+}
+.foot .cv-sep{background:var(--rule)}
+
+@media (max-width:940px){
+  .cover-name{letter-spacing:-1.6px;margin-bottom:13px}
+  /* the meta row wraps on a phone; a dot separator stranded at the end of a
+     line reads as a typo, so drop the dots and separate on whitespace alone */
+  .cover-meta{margin-bottom:24px;gap:5px 16px}
+  .cover-meta .cv-sep{display:none}
+  .foot{padding:26px 26px 0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .cover-name .cw{animation:none!important}
+  .store .cv-arw{transition:none}
+  .store:hover .cv-arw{translate:none}
+}
+
+
+/* ================= scroll system (sx) =================
+   Owns: the .rv/.in reveal, the section-label rule draw, the reading
+   progress hairline, and one shared rAF tick (window.__sxFrameHooks).
+   Does NOT own: .on / scroll-spy (nav-and-spy), .stat or .tag
+   choreography (numbers-and-tags), .proj hover or pointer (cards-and-pointer).
+
+   Two rules make this safe to merge:
+     1. it never declares `transition` on a shared element — the reveal is
+        an @keyframes animation, so .proj's own transition survives intact;
+     2. it never declares `transform` on a shared element — it moves things
+        with the individual `translate` / `scale` properties, which compose
+        with `transform` instead of overwriting it. A hover lift and a
+        pointer tilt can both run on the same node during a reveal.
+
+   REPLACES the old `/* ---------- reveal ---------- *\/` block, which must
+   be deleted: its `.rv{transition:...}` outranks `.proj` and clobbers the
+   card hover transition. Its two reduced-motion declarations
+   (html{scroll-behavior} and .proj{transition:none}) are re-declared below. */
+
+:root{
+  --sx-e:cubic-bezier(.22,.72,.24,1);
+  --sx-t:.58s;
+}
+
+/* ---------- reveal ----------
+   Every hidden state is gated on html.sx-js, which the script adds as its
+   first statement. No JS, JS disabled, or an exception thrown by any other
+   block before this one => the class is absent => nothing is ever hidden. */
+html.sx-js .rv:not(.in){
+  opacity:0;
+  translate:0 var(--sx-y,16px);
+  scale:var(--sx-sc,1);
+}
+/* a keyboard user can outrun the observer; never hide focus */
+html.sx-js .rv:not(.in):focus-within{opacity:1;translate:none;scale:1}
+
+html.sx-js .rv.in{animation:sx-in var(--sx-t) var(--sx-e) var(--sx-d,0ms) both}
+/* released once settled, so the fill-forward stops pinning translate/scale */
+html.sx-js .rv.in.rv--done{animation:none}
+
+@keyframes sx-in{
+  from{opacity:0; translate:0 var(--sx-y,16px); scale:var(--sx-sc,1)}
+  to  {opacity:1; translate:none; scale:1}
+}
+
+/* the only variant: bordered/filled panels rise slightly less and settle
+   out of a hair of scale, so they read as objects rather than as text */
+.rv--card{--sx-y:12px;--sx-sc:.99;--sx-t:.62s}
+
+/* ---------- section label: the hairline draws itself in ----------
+   transform on the existing ::after only — same colour, same geometry,
+   no paint, no layout. Resting state is byte-identical to today. */
+.label::after{transform:scaleX(var(--sx-r,1));transform-origin:0 50%}
+html.sx-js .label::after{transition:transform .8s var(--sx-e) 60ms}
+html.sx-js .label:not(.sx-seen){--sx-r:0}
+
+/* ---------- reading progress ----------
+   Desktop: 2px of --accent riding the sticky rail's own border-right.
+   Mobile: the rail scrolls away, so it becomes a fixed top hairline.
+   Insets match .rail's padding (44px top / 30px bottom) so the track spans
+   the full 100vh border box; update them if that padding ever changes. */
+.sx-prog{
+  position:absolute;top:-44px;bottom:-30px;right:-1px;width:2px;
+  pointer-events:none;overflow:hidden;
+}
+.sx-prog-i{
+  display:block;width:100%;height:100%;background:var(--accent);
+  transform:scaleY(var(--sx-p,0));transform-origin:50% 0;
+}
+@keyframes sx-prog-y{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes sx-prog-x{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* native scroll-driven where available: runs off the main thread, and the
+   JS detects the same condition and never starts its loop */
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .sx-prog-i{animation:sx-prog-y linear both;animation-timeline:scroll(root block)}
+  }
+}
+
+@media (max-width:940px){
+  .sx-prog{position:fixed;top:0;left:0;right:0;bottom:auto;width:auto;height:2px;z-index:60}
+  .sx-prog-i{transform:scaleX(var(--sx-p,0));transform-origin:0 50%}
+}
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference) and (max-width:940px){
+    .sx-prog-i{animation-name:sx-prog-x}
+  }
+}
+
+/* ---------- reduced motion ----------
+   Includes the two declarations inherited from the deleted reveal block. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .proj{transition:none}
+  html.sx-js .rv,
+  html.sx-js .rv:not(.in),
+  html.sx-js .rv.in{
+    opacity:1!important;translate:none!important;scale:1!important;
+    animation:none!important;
+  }
+  html.sx-js .label:not(.sx-seen){--sx-r:1}
+  html.sx-js .label::after{transition:none}
+  /* the bar stays — it is a positional readout, like a scrollbar — but it
+     snaps rather than eases, and no animation drives it */
+  .sx-prog-i{animation:none!important;transition:none!important}
+}
+
+
+/* ================= numbers & tags (nt-) =================
+   Paste at the END of the existing <style\>, immediately before <\/style>.
+   The @media (prefers-reduced-motion:reduce) block at the bottom must
+   remain the last thing in this section.                              */
+
+/* ---- stat numerals ---- */
+.stat .n{
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+  transition:color .45s ease;
+}
+.stat .n.nt-live{color:var(--accent)}
+
+/* ---- hairline under each stat, drawn in sync with its own count ---- */
+.nt-rule{
+  display:block;height:2px;margin-top:10px;
+  background:var(--rule);pointer-events:none;
+}
+.nt-rule-fill{
+  display:block;height:100%;width:100%;
+  background:var(--accent);
+  transform:scaleX(1);              /* default = drawn: correct with no JS */
+  transform-origin:left center;
+}
+
+/* ---- "EN / AR": the slash holds, EN leaves left, AR leaves right ---- */
+.nt-lang{white-space:nowrap}
+.nt-lang-a,.nt-lang-b{display:inline-block}
+.nt-armed .nt-lang-a,.nt-armed .nt-lang-b{opacity:0}
+.nt-lang-run .nt-lang-a{
+  animation:nt-lang-l .5s cubic-bezier(.2,.75,.25,1) var(--nt-ld,0ms) both;
+}
+.nt-lang-run .nt-lang-b{
+  animation:nt-lang-r .5s cubic-bezier(.2,.75,.25,1) calc(var(--nt-ld,0ms) + 110ms) both;
+}
+@keyframes nt-lang-l{from{opacity:0;transform:translateX(-.4em)}to{opacity:1;transform:none}}
+@keyframes nt-lang-r{from{opacity:0;transform:translateX(.4em)} to{opacity:1;transform:none}}
+
+/* ---- skill rows: left accent bar on hover / focus-within ---- */
+.srow{position:relative}
+.srow::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--accent);
+  transform:scaleY(0);transform-origin:top center;
+  transition:transform .3s cubic-bezier(.2,.75,.25,1);
+  pointer-events:none;
+}
+.srow:hover::before,.srow:focus-within::before{transform:scaleY(1)}
+
+/* ---- tag cascade on entry ---- */
+.nt-tag-run{animation:nt-tag-in .34s cubic-bezier(.2,.75,.25,1) var(--nt-d,0ms) backwards}
+@keyframes nt-tag-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---- tag interaction ---- */
+.tag{
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,
+             transform .16s cubic-bezier(.2,.75,.25,1);
+}
+@media (hover:hover){
+  .srow .tag:hover{
+    background:var(--accent-soft);border-color:var(--accent);color:var(--accent);
+    transform:translateY(-2px);
+  }
+}
+.tag:focus-visible{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+/* ---- reduced motion: neutralised, final state shown ---- */
+@media (prefers-reduced-motion:reduce){
+  .stat .n,.tag,.srow::before,.nt-rule-fill{transition:none!important}
+  .nt-tag-run,
+  .nt-lang-run .nt-lang-a,.nt-lang-run .nt-lang-b{animation:none!important}
+  .nt-tag-run,.nt-lang-a,.nt-lang-b{opacity:1!important;transform:none!important}
+  .nt-rule-fill{transform:none!important}   /* = fully drawn, beats inline scaleX */
+  .stat .n.nt-live{color:var(--ink)!important}
+  .srow .tag:hover{transform:none!important}
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   CARDS & POINTER — live card surfaces
+   Owns: .proj / .sec .card / .duo > div / .cta
+         and their ::before (pointer light) + ::after (hairline).
+   Namespace: --crd-*.  No new class names, no markup changes.
+   PLACEMENT: append at the very END of the existing <style\> block.
+   It must sit after the `.rv` rules (line ~186) — the transition list
+   below deliberately supersedes .rv's shorthand on these two selectors.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Spotlight strength. Light theme is the failure mode for glow, so the
+   light multiplier is lower: --accent-soft is 10% alpha of a dark teal,
+   which on a white card reads as a tint, not a glow. That is correct. */
+:root{ --crd-lens:.85 }
+html[data-theme="dark"]{ --crd-lens:1 }
+
+/* ── surface plumbing: no motion, served to every device ──────────────
+   isolation:isolate gives each surface its own stacking context so the
+   z-index:-1 light paints ABOVE the card background and BELOW its text.
+   .proj gets one from its hover transform anyway; .sec .card, .duo > div
+   and .cta do not, hence the explicit declaration. */
+.proj, .sec .card, .duo > div, .cta{
+  position:relative;
+  isolation:isolate;
+  --crd-key:var(--accent);
+  --crd-wash:var(--accent-soft);
+  --crd-r:320px;
+}
+.sec .card{ --crd-r:280px }
+.sec .card.warm{ --crd-key:var(--warm); --crd-wash:var(--warm-soft) }
+.duo > div{ --crd-r:220px }
+.duo .break{ --crd-key:var(--warm); --crd-wash:var(--warm-soft) }
+/* .cta renders on --code-bg, which is dark in BOTH themes, so its wash is
+   a fixed value tuned against that fixed ground — the same reason the file
+   already hardcodes #2A3940 / #9FB2B9 / #1B262B inside .cta. A token that
+   flipped with the theme would be wrong here. */
+.cta{ --crd-r:420px; --crd-wash:rgba(72,174,204,.14); --crd-lens:1 }
+
+/* ── transition list ───────────────────────────────────────────────────
+   .rv{transition:opacity .55s ease,transform .55s ease} is declared AFTER
+   .proj{transition:...} at equal specificity, so today .rv silently wins
+   and .proj's hover lift actually runs at .55s. This one rule (0,2,0)
+   restores a single coherent list that serves the reveal AND the hover for
+   both card types, keeping opacity at .55s ease so the reveal is unchanged.
+   It is gated on no-preference so it can never override the file's
+   `.rv{transition:none}` / `.proj{transition:none}` reduce block.
+   >>> If scroll-system retimes the reveal, update the opacity/transform
+   >>> segments here to match. This is the ONE existing declaration I take. */
+@media (prefers-reduced-motion:no-preference){
+  .proj, .sec .card{
+    transition:opacity .55s ease,
+               transform .26s cubic-bezier(.2,.7,.2,1),
+               box-shadow .22s ease,
+               border-color .22s ease;
+  }
+}
+
+/* ══ interactive layer — fine pointer AND motion allowed ═══════════════
+   Nothing below is even declared for coarse pointers or reduced motion. */
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+
+  /* 1 ── pointer light. One radial gradient, anchored to --crd-mx/--crd-my,
+          coloured straight from the theme tokens. Inset to 0 so it can never
+          spill past the card and no overflow:hidden is needed anywhere (which
+          matters: .cta contains focusable links with a 3px outline-offset).
+          The 50%/50% fallback means a card that gains :hover without a
+          pointermove — e.g. the page scrolls under a stationary cursor —
+          lights from its centre instead of its top-left corner. */
+  .proj::before,
+  .sec .card::before,
+  .duo > div::before,
+  .cta::before{
+    content:""; position:absolute; left:0; top:0; right:0; bottom:0;
+    z-index:-1; pointer-events:none; border-radius:inherit;
+    opacity:0; transition:opacity .3s ease;
+    background:radial-gradient(circle var(--crd-r)
+                 at var(--crd-mx,50%) var(--crd-my,50%),
+                 var(--crd-wash), transparent 66%);
+  }
+  .proj:hover::before,
+  .sec .card:hover::before,
+  .duo > div:hover::before,
+  .cta:hover::before{ opacity:var(--crd-lens) }
+
+  /* 2 ── pointer-anchored hairline: a 1px accent rule that grows out of the
+          top border from exactly where the cursor entered. Same language as
+          .label::after, so it reads as the page's own vocabulary. This is the
+          tilt replacement — the "surface registered you" payoff with zero
+          shear, zero glyph softening, zero layout shift.
+          left/right:-1px makes the pseudo's box the BORDER box, so the line
+          sits on the border and --crd-mx (measured from the same box) is
+          exact rather than 1px out. */
+  .proj::after,
+  .sec .card::after,
+  .cta::after{
+    content:""; position:absolute; left:-1px; right:-1px; top:-1px; height:1px;
+    z-index:1; pointer-events:none; opacity:0;
+    background:linear-gradient(90deg, transparent,
+                 var(--crd-key) 20%, var(--crd-key) 80%, transparent);
+    transform:scaleX(0); transform-origin:var(--crd-mx,50%) 50%;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1), opacity .28s ease;
+  }
+  .cta::after{ left:0; right:0; top:0 }   /* .cta has no border to sit on */
+  .proj:hover::after,
+  .sec .card:hover::after,
+  .cta:hover::after,
+  .cta:focus-within::after{ transform:scaleX(1); opacity:1 }
+  /* NOTE: do not make the gradient a solid colour — the transparent ends are
+     what keep the line from poking past the 12/14px corner radius. */
+
+  /* 3 ── .sec .card picks up the lift .proj already has, keyed to its own hue
+          (warm for the vulnerability-research card). Consistency fix. */
+  .sec .card:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow);
+    border-color:var(--crd-key);
+  }
+
+  /* 4 ── the project's kind pill inverts. Colour only, no transform — the
+          card is already lifting underneath it. */
+  .proj .kind{ transition:background-color .25s ease, color .25s ease }
+  .proj:hover .kind{ background-color:var(--crd-key); color:var(--paper) }
+
+  /* 5 ── Build / Break. The copy in the hovered half resolves from --muted to
+          --ink, and the shared divider draws itself out from the pointer's y
+          in the hovered side's own colour. The divider lives on .break (which
+          owns the border via .duo>div+div) and is driven from either half —
+          the JS writes the coordinates to the shared .duo parent for exactly
+          this reason. */
+  .duo > div p{ transition:color .28s ease }
+  .duo > div:hover p{ color:var(--ink) }
+
+  .duo .break::after{
+    content:""; position:absolute; top:0; bottom:0; left:-1px; width:1px;
+    z-index:1; pointer-events:none; background:var(--warm);
+    transform:scaleY(0); transform-origin:50% var(--crd-my,50%);
+    transition:transform .46s cubic-bezier(.2,.7,.2,1), background-color .25s ease;
+  }
+  .duo .break:hover::after{ transform:scaleY(1) }
+  .duo .build:hover + .break::after{ transform:scaleY(1); background:var(--accent) }
+}
+
+/* Below 940px the split stacks, .duo>div+div swaps border-left for
+   border-top, and the divider must key off x — not cosmetic: stacked, the two
+   halves no longer share a top edge, so a y-derived origin would be measured
+   against the wrong box. They do still share a left edge. */
+@media (hover:hover) and (pointer:fine)
+   and (prefers-reduced-motion:no-preference) and (max-width:940px){
+  .duo .break::after{
+    top:-1px; bottom:auto; left:0; right:0; width:auto; height:1px;
+    transform:scaleX(0); transform-origin:var(--crd-mx,50%) 50%;
+  }
+  .duo .break:hover::after,
+  .duo .build:hover + .break::after{ transform:scaleX(1) }
+}
+
+/* ── reduced motion: belt and braces ──────────────────────────────────
+   Everything above is gated at declaration time, so a reduced-motion user is
+   never served a single transition, transform or decorative layer — they are
+   not overridden after the fact, they are never declared. This block only
+   guarantees inertness if the rules above are ever reordered during the merge.
+   These eight pseudo-elements belong to this dimension alone; no other
+   dimension may declare them. */
+@media (prefers-reduced-motion:reduce){
+  .proj::before, .sec .card::before, .duo > div::before, .cta::before,
+  .proj::after,  .sec .card::after,  .cta::after,        .duo .break::after{
+    display:none;
+  }
+}
+
+
+/* =========================================================
+   NAV — sliding active indicator + hover tick        (manav-)
+   Paste at the END of the existing <style\>.
+   Source order inside this block is load-bearing: the
+   prefers-reduced-motion rule at the bottom neutralises
+   equal-specificity declarations above it.
+   ========================================================= */
+
+#nav{position:relative}
+
+/* The active marker. Base box is 1x1px; JS only ever writes a single
+   translate3d()+scale(), so the vertical rail bar and the <=940px
+   underline are the same compositor-only transform. transform-origin
+   0 0 makes the scaled box occupy exactly [x, x+sx] x [y, y+sy]. */
+.manav-ind{
+  position:absolute; left:0; top:0; width:1px; height:1px;
+  background:var(--accent);
+  transform-origin:0 0;
+  transform:translate3d(0,0,0) scale(2,0);
+  opacity:0; pointer-events:none; will-change:transform;
+  transition:transform .32s cubic-bezier(.22,.61,.36,1), opacity .2s linear;
+}
+.manav-ind.manav-lit{opacity:1}
+/* re-seating after a relayout (fonts, resize, breakpoint flip):
+   move without sliding, but keep the fade so first paint isn't a pop */
+.manav-ind.manav-jump{transition:opacity .2s linear}
+
+/* The bar replaces the static border — but only once JS has measured.
+   With JS disabled, .manav-ready is never set and the original
+   border-left / border-bottom active state is untouched. */
+#nav.manav-ready a.on{border-left-color:transparent;border-bottom-color:transparent}
+
+/* Hover tick — wires up the previously dead `nav a::before` rule.
+   Sits inside the 16px left padding, between the bar and the label. */
+#nav a::before{
+  content:""; position:absolute; left:0; top:50%;
+  width:9px; height:1px; margin-top:-.5px;
+  background:var(--accent); opacity:0;
+  transform:scaleX(0); transform-origin:0 50%;
+  transition:transform .22s cubic-bezier(.22,.61,.36,1), opacity .22s ease;
+  pointer-events:none;
+}
+@media (hover:hover){
+  #nav a:hover::before{transform:scaleX(1);opacity:.55}
+}
+/* deliberately its own rule: browsers that can't parse :focus-visible
+   drop this line only, instead of invalidating a grouped selector */
+#nav a:focus-visible::before{transform:scaleX(1);opacity:.55}
+
+/* <=940px the rail is a wrapping top bar: the marker becomes an
+   underline, and the tick would sit under the label, so retire it. */
+@media (max-width:940px){
+  #nav a::before{display:none}
+  #nav a{border-radius:5px 5px 0 0;transition:color .16s,border-color .16s,background-color .18s}
+  #nav.manav-ready a.on{background-color:var(--accent-soft)}
+}
+/* hover-capable pointers only — :hover latches after a tap on touch */
+@media (max-width:940px) and (hover:hover){
+  #nav a:hover{background-color:var(--accent-soft)}
+}
+
+/* Reduced motion: the bar becomes a static 2px accent mark, i.e.
+   visually identical to the border it replaced. Nothing is hidden,
+   delayed or animated; there is no rAF loop to stop. KEEP LAST. */
+@media (prefers-reduced-motion:reduce){
+  .manav-ind,
+  .manav-ind.manav-jump,
+  #nav a::before{transition:none}
+}
+
+
+/* ==========================================================================
+   MICRO-INTERACTIONS — append at the VERY END of the existing <style\> block.
+   Placement is load-bearing: the `.toggle`, `.contact a` and `.cta .links a`
+   rules restate an existing `transition` shorthand in order to add a property
+   (CSS cannot append to a transition list). Appending last guarantees they win.
+
+   Adds: no fixed-position element, no z-index, no rAF loop, no scroll /
+   resize / pointermove listener. Claims transform on exactly two selectors:
+   `.toggle` (+ its two pseudos) and `.cta .links a` / `.cta .links .ma-copy`.
+   Claims custom properties --ma-vtx --ma-vty --ma-vtr (on <html>) and --ma-i.
+   ========================================================================== */
+
+/* ---------- 1. theme swap: circular reveal from the toggle ---------- */
+/* Neutralise the UA cross-fade, then clip the NEW frame open. Order matters:
+   the blanket `animation:none` must precede the -new rule that re-adds one. */
+html.ma-vt::view-transition-image-pair(root){isolation:auto}
+html.ma-vt::view-transition-old(root),
+html.ma-vt::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.ma-vt::view-transition-old(root){z-index:0}
+html.ma-vt::view-transition-new(root){
+  z-index:1;
+  animation:ma-vt-in .42s cubic-bezier(.32,.72,.3,1) both;
+}
+@keyframes ma-vt-in{
+  from{clip-path:circle(0px at var(--ma-vtx,50%) var(--ma-vty,50%))}
+  to  {clip-path:circle(var(--ma-vtr,150vmax) at var(--ma-vtx,50%) var(--ma-vty,50%))}
+}
+
+/* ---------- 2. theme toggle: press physics + sun/moon morph ---------- */
+.toggle{
+  transition:border-color .16s,color .16s,background-color .16s,transform .12s ease;
+}
+.toggle:hover{background-color:var(--accent-soft)}
+.toggle:active{transform:scale(.97)}
+
+/* Icon lives in pseudo-elements so the button's own textContent — which the
+   theme script rewrites on every toggle — can never destroy it.
+   Guarded: without mask support the padding slot is not reserved either, so
+   the button simply renders as it does today. */
+@supports (mask-image:none) or (-webkit-mask-image:none){
+  .toggle{position:relative;padding-left:30px}
+  .toggle::before,.toggle::after{
+    content:"";position:absolute;left:11px;top:50%;margin-top:-6.5px;
+    width:13px;height:13px;pointer-events:none;
+    background-color:currentColor;
+    -webkit-mask-image:var(--ma-i);mask-image:var(--ma-i);
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-position:center;mask-position:center;
+    -webkit-mask-size:13px 13px;mask-size:13px 13px;
+    transition:opacity .24s ease,transform .34s cubic-bezier(.32,.72,.3,1);
+  }
+  .toggle::before{--ma-i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.6 13.3A8.7 8.7 0 1 1 10.8 3.4a6.8 6.8 0 0 0 9.8 9.9Z'/%3E%3C/svg%3E")}
+  .toggle::after{--ma-i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2.7v2M12 19.3v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.7 12h2M19.3 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4'/%3E%3C/svg%3E")}
+  html:not([data-theme="dark"]) .toggle::after {opacity:0;transform:rotate(-90deg) scale(.5)}
+  html[data-theme="dark"]       .toggle::before{opacity:0;transform:rotate(90deg) scale(.5)}
+}
+
+/* ---------- 3. rail contact links: native underline sweep ---------- */
+/* text-decoration occupies no layout space and fragments correctly across the
+   line breaks that `word-break:break-all` produces on these anchors. */
+.contact a{
+  text-decoration:underline;
+  text-decoration-color:transparent;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  transition:color .16s,text-decoration-color .22s ease;
+}
+.contact a:hover,.contact a:focus-visible{text-decoration-color:currentColor}
+
+/* ---------- 4. CTA row: press physics ---------- */
+/* Specificity 0,3,1 / 0,2,1 — safely above the original `.links a` (0,1,1). */
+.cta .links a,
+.cta .links .ma-copy{
+  transition:background-color .16s,border-color .16s,color .16s,
+             transform .16s cubic-bezier(.32,.72,.3,1);
+}
+.cta .links a:hover,
+.cta .links .ma-copy:hover{transform:translateY(-1px)}
+.cta .links a:active,
+.cta .links .ma-copy:active{transform:translateY(0) scale(.985)}
+
+/* ---------- 5. copy-to-clipboard control (ships in HTML, no CLS) ---------- */
+/* Metrics mirror `.links a` exactly; line-height is stated because <button>
+   defaults to `normal` and would otherwise sit short in the stretch row. */
+.cta .links .ma-copy{
+  display:inline-flex;align-items:center;gap:9px;
+  -webkit-appearance:none;appearance:none;cursor:pointer;margin:0;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.4px;line-height:1.6;
+  padding:11px 18px;border-radius:8px;
+  border:1px solid #2A3940;background:transparent;color:#D6E3E7;
+}
+.cta .links .ma-copy:hover{background:#1B262B;border-color:var(--accent);color:#fff}
+/* Success/failure keep #fff text: --accent on --code-bg is only 3.1:1 in the
+   light theme, and this panel is dark in both. Border carries the colour. */
+.cta .links .ma-copy.ma-ok{border-color:var(--accent);color:#fff;background:transparent}
+.cta .links .ma-copy.ma-no{border-color:var(--warm);color:#fff;background:transparent}
+
+.ma-cico{position:relative;display:block;width:13px;height:13px;flex:0 0 13px}
+.ma-cico svg{
+  position:absolute;top:0;left:0;width:13px;height:13px;display:block;
+  transition:opacity .18s ease,transform .28s cubic-bezier(.32,.72,.3,1);
+}
+.ma-ci-ok{opacity:0;transform:scale(.55)}
+.ma-copy.ma-ok .ma-ci-ok{opacity:1;transform:none}
+.ma-copy.ma-ok .ma-ci-copy{opacity:0;transform:scale(.55)}
+
+/* ---------- 6. screen-reader announcer (zero layout footprint) ---------- */
+.ma-sr{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;
+  overflow:hidden;white-space:nowrap;clip:rect(0 0 0 0);clip-path:inset(50%);
+}
+
+/* ---------- 7. reduced motion: everything above becomes an instant state ---------- */
+@media (prefers-reduced-motion:reduce){
+  html.ma-vt::view-transition-old(root),
+  html.ma-vt::view-transition-new(root),
+  html.ma-vt::view-transition-group(root){animation:none!important}
+  .toggle,.toggle::before,.toggle::after,
+  .contact a,
+  .cta .links a,.cta .links .ma-copy,
+  .ma-cico svg{transition:none!important}
+  .toggle:active,
+  .cta .links a:hover,.cta .links a:active,
+  .cta .links .ma-copy:hover,.cta .links .ma-copy:active{transform:none}
+  /* underline, icon swap and theme swap all still happen — instantly. */
+}
+
+
+/* ==========================================================
+   AMBIENT BACKGROUND LAYER — all new selectors namespaced .amb*
+   Paste at the END of the existing <style\> block.
+   Reserves custom properties --amb-*. Claims z-index 0 (layer)
+   and z-index 1 (.shell); any other fixed overlay must use >= 2.
+   ========================================================== */
+
+/* --- namespaced tokens (theme-aware; no hardcoded visible colour) --- */
+:root{
+  --amb-wash:.55;      /* light: washes are barely there */
+  --amb-major:.55;     /* 330px graticule */
+  --amb-minor:.26;     /* 66px graticule */
+  --amb-cell:66px;
+  --amb-cell-lg:330px;
+}
+html[data-theme="dark"]{
+  --amb-wash:.85;
+  --amb-major:.72;
+  --amb-minor:.38;
+}
+
+/* --- the layer: fixed, decorative, behind .shell, above body bg --- */
+.amb{
+  position:fixed; top:0; right:0; bottom:0; left:0;
+  z-index:0; pointer-events:none; overflow:hidden;
+  contain:layout paint style;
+}
+/* applied only once JS has actually built the layer */
+html.amb-live .shell{position:relative; z-index:1}
+/* the rail owns its own 290px grid column and nothing ever scrolls under
+   it, so dropping its opaque paper fill is safe and removes the vertical
+   seam that would otherwise cut every wash at the rail rule.
+   NOTE for nav-and-spy: paint any rail chrome on .rail::before, not on
+   .rail's own background, or this line and that one will fight. */
+html.amb-live .rail{background:transparent}
+
+/* --- washes: three slow token-coloured blooms, CSS-only drift --- */
+.amb-wash{
+  position:absolute; top:-14%; right:-14%; bottom:-14%; left:-14%;
+  opacity:var(--amb-wash);
+  transform:translate3d(0,0,0);
+  will-change:transform;
+}
+.amb-b{
+  position:absolute; display:block;
+  max-width:1040px; max-height:1040px;   /* caps raster on 4K / ultrawide */
+  backface-visibility:hidden;
+}
+.amb-b1{
+  width:60vmax; height:60vmax; left:-14vmax; top:-20vmax;
+  background:radial-gradient(circle at 50% 50%,
+    var(--accent-soft) 0%, var(--accent-soft) 12%, transparent 66%);
+  animation:amb-drift-a 74s ease-in-out infinite alternate;
+}
+.amb-b2{
+  width:48vmax; height:48vmax; right:-14vmax; top:10vmax;
+  background:radial-gradient(circle at 50% 50%,
+    var(--warm-soft) 0%, var(--warm-soft) 10%, transparent 64%);
+  animation:amb-drift-b 96s ease-in-out infinite alternate;
+}
+.amb-b3{
+  width:54vmax; height:54vmax; left:18vmax; bottom:-28vmax;
+  background:radial-gradient(circle at 50% 50%,
+    var(--accent-soft) 0%, transparent 62%);
+  animation:amb-drift-c 118s ease-in-out infinite alternate;
+}
+@keyframes amb-drift-a{
+  0%  {transform:translate3d(0,0,0) scale(1)}
+  50% {transform:translate3d(3vmax,2vmax,0) scale(1.05)}
+  100%{transform:translate3d(-2vmax,4vmax,0) scale(1.01)}
+}
+@keyframes amb-drift-b{
+  0%  {transform:translate3d(0,0,0) scale(1.03)}
+  50% {transform:translate3d(-3.2vmax,2.6vmax,0) scale(1)}
+  100%{transform:translate3d(1.6vmax,-2.2vmax,0) scale(1.06)}
+}
+@keyframes amb-drift-c{
+  0%  {transform:translate3d(0,0,0) scale(1)}
+  50% {transform:translate3d(3.6vmax,-2vmax,0) scale(1.05)}
+  100%{transform:translate3d(-2.8vmax,-3.6vmax,0) scale(1.02)}
+}
+
+/* --- graticule: ONE element, two scales as pseudos, one transform.
+       Drawn in --rule so it is theme-correct at both ends. --- */
+.amb-grid{
+  position:absolute; top:-40px; right:-40px; bottom:-40px; left:-40px;
+  transform:translate3d(0,0,0);
+  will-change:transform;
+}
+.amb-grid::before,
+.amb-grid::after{
+  content:""; position:absolute; top:0; right:0; bottom:0; left:0;
+  background-image:
+    linear-gradient(to right, var(--rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+}
+.amb-grid::before{opacity:var(--amb-minor); background-size:var(--amb-cell) var(--amb-cell)}
+.amb-grid::after {opacity:var(--amb-major); background-size:var(--amb-cell-lg) var(--amb-cell-lg)}
+
+/* Mask is alpha-only (theme-independent by definition) and concentrates the
+   graticule in the empty top-right whitespace beside the hero. Total travel
+   is <=7px, so the mask edge never visibly slides. Progressive enhancement:
+   without mask support you get a uniform, still-correct, flatter weave. */
+@supports ((mask-image:radial-gradient(#000,transparent)) or (-webkit-mask-image:radial-gradient(#000,transparent))){
+  .amb-grid{
+    -webkit-mask-image:radial-gradient(120% 86% at 74% 0%, #000 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,0) 80%);
+            mask-image:radial-gradient(120% 86% at 74% 0%, #000 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,0) 80%);
+  }
+}
+
+/* Dark is the banding-prone case (steps read on a dark ground); one modest
+   blur only there. Light needs none — the gradient falloff plus dithering
+   already puts every step under 1 sRGB level. */
+html[data-theme="dark"] .amb-b{filter:blur(18px)}
+
+/* --- paused: tab hidden, or reduced motion toggled on at runtime --- */
+.amb-pause .amb-b{animation-play-state:paused}
+
+/* --- narrow / touch: cheaper still --- */
+@media (max-width:940px){
+  :root{--amb-cell:54px; --amb-cell-lg:270px}
+  .amb-b3{display:none}
+  html[data-theme="dark"] .amb-b{filter:none}
+}
+
+/* --- reduced motion: total neutralisation, layer survives as a still wash --- */
+@media (prefers-reduced-motion:reduce){
+  .amb-b{animation:none !important}
+  .amb-wash,.amb-grid{
+    transform:none !important;
+    will-change:auto;
+  }
+}
+
+/* --- never in print, never in forced colours --- */
+@media print{
+  .amb{display:none}
+  html.amb-live .rail{background:var(--paper)}
+}
+@media (forced-colors:active){
+  .amb{display:none}
+  html.amb-live .rail{background:var(--paper)}
+}
 </style>
+<noscript><style>html.sx-js .rv:not(.in){opacity:1;translate:none;scale:1}html.sx-js .label:not(.sx-seen){--sx-r:1}.sx-prog{display:none}</style></noscript>
 </head>
 <body>
 <div class="shell">
 
   <aside class="rail">
-    <div class="mark">MA</div>
+    <div class="mark mah-mark">MA</div>
     <div>
-      <h1>Mohamed Ayad</h1>
-      <div class="role">Flutter &amp; Dart Developer</div>
+      <div class="rail-name mah-h1">Mohamed Ayad</div>
+      <div class="role mah-role">Flutter &amp; Dart Developer</div>
     </div>
-    <nav id="nav">
+    <nav id="nav" class="mah-nav" aria-label="Sections">
       <a href="#about">About</a>
       <a href="#skills">Skills</a>
       <a href="#experience">Experience</a>
@@ -226,7 +1204,11 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
       <a href="#education">Education</a>
       <a href="#contact">Contact</a>
     </nav>
-    <div class="rail-foot">
+    <div class="rail-foot mah-foot">
+      <div class="mah-live">
+        <span class="mah-dot" aria-hidden="true"></span>Open to work
+        <span class="mah-now" id="mahNow" hidden><span class="mah-tz">Cairo</span><span class="mah-t"><span id="mahHM">--:--</span><span class="mah-sec" id="mahS"></span></span></span>
+      </div>
       <div class="contact">
         <a href="mailto:mohamedezatayad2005@gmail.com">mohamedezatayad2005@gmail.com</a>
         <a href="tel:+201127902941">+20 112 790 2941</a>
@@ -235,17 +1217,28 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
       </div>
       <button class="toggle" id="themeBtn" type="button" aria-label="Switch colour theme">Dark mode</button>
     </div>
+    <div class="sx-prog" aria-hidden="true"><span class="sx-prog-i"></span></div>
   </aside>
 
   <main>
 
     <section class="hero" id="about">
-      <div class="kicker">Mobile Application Developer</div>
-      <h2 class="rv">I build production apps — and I know how they <em>break</em>.</h2>
-      <p class="lead rv">Three-plus years building and maintaining large-scale Flutter applications for enterprise clients: Clean Architecture, BLoC/Cubit, REST and WebSocket integration, role-based access control, and full Arabic/English localisation with RTL support.</p>
-      <p class="lead dim rv">A background in Cybersecurity Engineering and AWS infrastructure, alongside active bug bounty practice, brings a security-first perspective to authentication, authorisation and data handling across the whole development lifecycle.</p>
+      <div class="kicker mah-kick">Mobile Application Developer</div>
 
-      <div class="duo rv">
+      <h1 class="cover-name"><span class="cw" style="--cv-i:0">Mohamed</span> <span class="cw" style="--cv-i:1">Ayad<span class="cv-dot">.</span></span></h1>
+
+      <div class="cover-meta mah-rise" style="--mah-d:.17s">
+        <span>Flutter &amp; Dart</span><span class="cv-sep" aria-hidden="true"></span>
+        <span>Clean Architecture</span><span class="cv-sep" aria-hidden="true"></span>
+        <span>Bug Bounty</span><span class="cv-sep" aria-hidden="true"></span>
+        <span>Cairo, Egypt</span>
+      </div>
+
+      <h2 class="mah-h2 cover-claim"><span class="mah-w" style="--mah-i:0">I</span> <span class="mah-w" style="--mah-i:1">build</span> <span class="mah-w" style="--mah-i:2">production</span> <span class="mah-w" style="--mah-i:3">apps</span> <span class="mah-w" style="--mah-i:4">—</span> <span class="mah-w" style="--mah-i:5">and</span> <span class="mah-w" style="--mah-i:6">I</span> <span class="mah-w" style="--mah-i:7">know</span> <span class="mah-w" style="--mah-i:8">how</span> <span class="mah-w" style="--mah-i:9">they</span> <span class="mah-w" style="--mah-i:10"><em class="mah-em">break</em>.</span></h2>
+      <p class="lead mah-rise" style="--mah-d:.36s">Three-plus years building and maintaining large-scale Flutter applications for enterprise clients: Clean Architecture, BLoC/Cubit, REST and WebSocket integration, role-based access control, and full Arabic/English localisation with RTL support.</p>
+      <p class="lead dim mah-rise" style="--mah-d:.4s">A background in Cybersecurity Engineering and AWS infrastructure, alongside active bug bounty practice, brings a security-first perspective to authentication, authorisation and data handling across the whole development lifecycle.</p>
+
+      <div class="duo mah-duo mah-rise" style="--mah-d:.45s">
         <div class="build">
           <div class="t">Build</div>
           <p>Enterprise Flutter apps shipped to production — workforce management, property and finance platforms, real-time AI assistants, travel planning.</p>
@@ -256,11 +1249,27 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         </div>
       </div>
 
-      <div class="stats rv">
-        <div class="stat"><div class="n">3+</div><div class="l">Years Flutter</div></div>
-        <div class="stat"><div class="n">7</div><div class="l">Shipped projects</div></div>
-        <div class="stat"><div class="n">EN / AR</div><div class="l">Full RTL support</div></div>
-        <div class="stat"><div class="n">3</div><div class="l">Certifications</div></div>
+      <div class="stats mah-rise" style="--mah-d:.5s">
+        <div class="stat">
+          <div class="n">3+</div>
+          <div class="l">Years Flutter</div>
+          <span class="nt-rule" aria-hidden="true"><span class="nt-rule-fill"></span></span>
+        </div>
+        <div class="stat">
+          <div class="n">7</div>
+          <div class="l">Shipped projects</div>
+          <span class="nt-rule" aria-hidden="true"><span class="nt-rule-fill"></span></span>
+        </div>
+        <div class="stat">
+          <div class="n nt-lang"><span class="nt-lang-a">EN</span> / <span class="nt-lang-b">AR</span></div>
+          <div class="l">Full RTL support</div>
+          <span class="nt-rule" aria-hidden="true"><span class="nt-rule-fill"></span></span>
+        </div>
+        <div class="stat">
+          <div class="n">3</div>
+          <div class="l">Certifications</div>
+          <span class="nt-rule" aria-hidden="true"><span class="nt-rule-fill"></span></span>
+        </div>
       </div>
     </section>
 
@@ -333,12 +1342,13 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
 
     <section id="projects">
       <p class="label">Key Projects</p>
+      <p class="proj-note">Client applications are covered by non-disclosure agreements — source, builds and screenshots stay private. Nada City is publicly listed and linked below. Happy to walk through architecture and trade-offs in conversation.</p>
       <div class="projects">
 
         <article class="proj rv">
           <div class="head">
             <h3>My Teams — Workforce &amp; Operations Management</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · BLoC/Cubit · Clean Architecture · Dio · Retrofit · Firebase Cloud Messaging</div>
           <ul class="pts">
@@ -353,7 +1363,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>Real Estate — Property Management Platform</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · BLoC/Cubit · Clean Architecture · Socket.IO · REST APIs</div>
           <ul class="pts">
@@ -368,7 +1378,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>My Trips — Travel Planning Application</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · BLoC/Cubit · Socket.IO · Google Maps · Firebase</div>
           <ul class="pts">
@@ -382,7 +1392,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>Omni Agent — AI-Powered Multi-Modal Assistant</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · Clean Architecture · REST APIs · WebSockets</div>
           <ul class="pts">
@@ -394,7 +1404,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>Nada City — City Services Application</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><a class="store" href="https://play.google.com/store/apps/details?id=com.nada.city" target="_blank" rel="noopener noreferrer">Google Play<svg class="cv-arw" width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.4 7.6L7.6 2.4M3.6 2.4h4v4"/></svg><span class="sr-only"> (opens in a new tab)</span></a></span>
           </div>
           <div class="stack">Flutter · BLoC · Modular architecture</div>
           <ul class="pts">
@@ -406,7 +1416,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>Pet Adoption Platform</h3>
-            <span class="kind">Full-stack</span>
+            <span class="badges"><span class="kind">Full-stack</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · MVVM · Node.js · MySQL</div>
           <ul class="pts">
@@ -418,7 +1428,7 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <article class="proj rv">
           <div class="head">
             <h3>Hospital Management System</h3>
-            <span class="kind">Flutter</span>
+            <span class="badges"><span class="kind">Flutter</span><span class="nda" title="Client work under a non-disclosure agreement">NDA</span></span>
           </div>
           <div class="stack">Flutter · MVVM · API integration</div>
           <ul class="pts">
@@ -470,6 +1480,13 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
         <p>Open to Flutter and mobile engineering roles. Happy to talk about architecture, real-time systems, localisation, or where your app might be leaking.</p>
         <div class="links">
           <a class="primary" href="mailto:mohamedezatayad2005@gmail.com">Email me</a>
+          <button class="ma-copy" type="button" data-ma-copy="mohamedezatayad2005@gmail.com">
+            <span class="ma-cico" aria-hidden="true">
+              <svg class="ma-ci-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5.5 15H4.6A1.6 1.6 0 0 1 3 13.4V4.6A1.6 1.6 0 0 1 4.6 3h8.8A1.6 1.6 0 0 1 15 4.6v.9"/></svg>
+              <svg class="ma-ci-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5L9.5 17.5L19.5 7.5"/></svg>
+            </span>
+            <span>Copy address</span>
+          </button>
           <a href="tel:+201127902941">+20 112 790 2941</a>
           <a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a href="https://github.com/memo410/memo410" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -477,51 +1494,1053 @@ ul.certs .by{color:var(--muted);font-family:var(--mono);font-size:11.5px;margin-
       </div>
     </section>
 
+    <footer class="foot">
+      <span>&copy; 2026 Mohamed Ayad</span>
+      <span class="cv-sep" aria-hidden="true"></span>
+      <span>Built by hand — no framework, no build step</span>
+    </footer>
+
   </main>
 </div>
 
 <script>
 (function(){
-  var root = document.documentElement;
-  var btn  = document.getElementById('themeBtn');
+
+  /* ================= scroll system (sx) =================
+     PASTE THIS FIRST inside the existing IIFE, above `var root = ...`.
+     Owns .rv/.in, .label/.sx-seen, the progress bar, and one rAF tick.
+     Does NOT touch #nav a / .on — that belongs to nav-and-spy, which can
+     run inside this tick by pushing a function into window.__sxFrameHooks. */
+
+  var sxD = document;
+  /* First statement: unlocks the hidden states in CSS. If any code above
+     this line ever throws, the class is never set and the page renders
+     fully. If anything below throws, the catch reveals everything. */
+  sxD.documentElement.className += ' sx-js';
+
+  var sxMq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function sxReduced(){ return !!(sxMq && sxMq.matches); }
+
+  function sxShowAll(){
+    var i, a = sxD.querySelectorAll('.rv');
+    for (i = 0; i < a.length; i++){ a[i].classList.add('in'); a[i].classList.add('rv--done'); }
+    a = sxD.querySelectorAll('.label');
+    for (i = 0; i < a.length; i++) a[i].classList.add('sx-seen');
+  }
+
+  try {
+
+    /* ---------- 1. reveal ---------- */
+    var SX_STEP = 60, SX_MAX = 180;
+    var SX_GRP  = '.projects,.sec,.two,.stats,.duo,.skills,section';
+
+    function sxGroup(el){
+      if (el.closest){ try { return el.closest(SX_GRP) || sxD.body; } catch(e){} }
+      return el.parentNode || sxD.body;
+    }
+    function sxIn(el, d){
+      if (el.classList.contains('in')) return;
+      if (d){ try { el.style.setProperty('--sx-d', d + 'ms'); } catch(e){} }
+      el.classList.add('in');
+      if (sxReduced()){ el.classList.add('rv--done'); return; }
+      /* release the animation's fill-forward so nothing else is pinned */
+      window.setTimeout(function(){ el.classList.add('rv--done'); }, 1200 + d);
+    }
+
+    if (!('IntersectionObserver' in window)) throw new Error('no IO');
+
+    var sxIo = new IntersectionObserver(function(entries){
+      var batch = [], i, en, t;
+      for (i = 0; i < entries.length; i++){
+        en = entries[i];
+        if (!en.isIntersecting) continue;
+        sxIo.unobserve(en.target);
+        t = en.target;
+        if (t.classList.contains('label')) t.classList.add('sx-seen');
+        else batch.push(en);
+      }
+      if (!batch.length) return;
+
+      /* Stagger is computed per delivered batch, per nearest container, so a
+         lone card that scrolls in waits 0ms while a row that arrives together
+         cascades. boundingClientRect rides along on the entry — no layout read. */
+      batch.sort(function(a, b){ return a.boundingClientRect.top - b.boundingClientRect.top; });
+      var keys = [], n = [], j, g, k;
+      for (i = 0; i < batch.length; i++){
+        g = sxGroup(batch[i].target); k = -1;
+        for (j = 0; j < keys.length; j++){ if (keys[j] === g){ k = j; break; } }
+        if (k < 0){ k = keys.length; keys.push(g); n.push(0); }
+        sxIn(batch[i].target, Math.min(n[k]++ * SX_STEP, SX_MAX));
+      }
+    }, { rootMargin:'0px 0px -8% 0px', threshold:0.05 });
+
+    var sxTargets = sxD.querySelectorAll('.rv, .label'), sxQi;
+    for (sxQi = 0; sxQi < sxTargets.length; sxQi++) sxIo.observe(sxTargets[sxQi]);
+
+    /* one deferred sweep (never in a scroll handler) for anything on screen
+       the observer somehow never delivered */
+    window.setTimeout(function(){
+      var i, r, a = sxD.querySelectorAll('.rv:not(.in)');
+      var vh = window.innerHeight || sxD.documentElement.clientHeight || 0;
+      for (i = 0; i < a.length; i++){
+        r = a[i].getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0) sxIn(a[i], 0);
+      }
+    }, 2000);
+
+  } catch (sxErr){ sxShowAll(); }
+
+  /* ---------- 2. progress bar + the shared frame tick ---------- */
+  var sxBar    = sxD.querySelector('.sx-prog-i');
+  var sxRaf    = window.requestAnimationFrame ? function(f){ return window.requestAnimationFrame(f); } : null;
+  var sxNative = !!(window.CSS && window.CSS.supports && window.CSS.supports('animation-timeline','scroll()'));
+  /* other dimensions push (scrollY, progress) callbacks here instead of
+     opening a second scroll listener + rAF loop */
+  var sxHooks  = (window.__sxFrameHooks = window.__sxFrameHooks || []);
+  var sxRun    = !!sxBar && !!sxRaf && (!sxNative || sxReduced());
+  var sxP = 0, sxQueued = false, sxMaxY = 0;
+
+  function sxRemeasure(){
+    var de = sxD.documentElement;
+    sxMaxY = (de.scrollHeight || 0) - (window.innerHeight || de.clientHeight || 0);
+  }
+  function sxFrame(){
+    sxQueued = false;
+    /* --- reads (cached geometry only: no forced layout) --- */
+    var y    = window.pageYOffset || sxD.documentElement.scrollTop || 0;
+    var goal = sxMaxY > 0 ? y / sxMaxY : 0;
+    if (goal < 0) goal = 0; else if (goal > 1) goal = 1;
+    /* --- writes --- */
+    if (sxRun){
+      sxP += (goal - sxP) * (sxReduced() ? 1 : 0.2);
+      if (Math.abs(goal - sxP) < 0.001) sxP = goal;
+      sxBar.style.setProperty('--sx-p', sxP.toFixed(4));
+    }
+    for (var i = 0; i < sxHooks.length; i++){
+      try { sxHooks[i](y, goal); } catch(e){}
+    }
+    /* self-terminating: re-arms only while the bar is still catching up */
+    if (sxRun && sxP !== goal) sxQueue();
+  }
+  function sxQueue(){
+    if (sxQueued || sxD.hidden || !sxRaf) return;
+    if (!sxRun && !sxHooks.length) return;
+    sxQueued = true;
+    sxRaf(sxFrame);
+  }
+
+  if (sxRaf){
+    sxRemeasure();
+    sxQueue();
+    window.addEventListener('scroll', sxQueue, { passive:true });
+    window.addEventListener('resize', function(){ sxRemeasure(); sxQueue(); });
+    window.addEventListener('load',   function(){ sxRemeasure(); sxQueue(); });
+    sxD.addEventListener('visibilitychange', function(){ if (!sxD.hidden) sxQueue(); });
+    if (window.ResizeObserver){
+      try { new ResizeObserver(function(){ sxRemeasure(); sxQueue(); }).observe(sxD.body); } catch(e){}
+    }
+  }
+  if (sxMq && sxMq.addEventListener){
+    sxMq.addEventListener('change', function(){
+      sxRun = !!sxBar && !!sxRaf && (!sxNative || sxReduced());
+      if (sxReduced()) sxShowAll();
+      sxQueue();
+    });
+  }
+
+/* =====================================================================
+   MICRO-INTERACTIONS — theme control + copy-to-clipboard.
+   Paste INSIDE the existing IIFE. Place it FIRST, above the reveal
+   observer, and DELETE the original theme lines (see integration_notes):
+   this block re-implements them against the same 'ma-theme' contract.
+
+   Adds no rAF loop, no scroll/resize/pointermove listener, no document-level
+   delegation and no fixed-position DOM — nothing to pause on visibilitychange
+   and nothing to compete with the scroll, nav or ambient systems.
+   ===================================================================== */
+(function(){
+  var d = document, R = d.documentElement;
+  var mqCalm = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  /* read live, not cached, so an OS-level change mid-session is honoured */
+  function calm(){ return !!(mqCalm && mqCalm.matches); }
+  function noop(){}
+
+  /* ---------------- polite announcer ---------------- */
+  var sr = d.createElement('span');
+  sr.className = 'ma-sr';
+  sr.setAttribute('role', 'status');
+  d.body.appendChild(sr);
+  var srT = 0;
+  function announce(msg){
+    clearTimeout(srT);
+    sr.textContent = '';
+    /* clear-then-set forces a re-announcement of identical text */
+    srT = setTimeout(function(){ sr.textContent = msg; }, 60);
+  }
+
+  /* ---------------- theme ---------------- */
+  var btn = d.getElementById('themeBtn');
+
+  var meta = d.querySelector('meta[name="theme-color"]');
+  if (!meta){
+    meta = d.createElement('meta');
+    meta.setAttribute('name', 'theme-color');
+    d.head.appendChild(meta);
+  }
+
+  function paint(t){
+    if (btn){
+      btn.textContent = (t === 'dark') ? 'Light mode' : 'Dark mode';
+      btn.setAttribute('aria-label', (t === 'dark') ? 'Switch to light theme'
+                                                    : 'Switch to dark theme');
+    }
+    var paper = '';
+    try{ paper = (getComputedStyle(R).getPropertyValue('--paper') || '').replace(/^\s+|\s+$/g, ''); }catch(e){}
+    meta.setAttribute('content', paper || (t === 'dark' ? '#0B1013' : '#EEF1F1'));
+  }
 
   function apply(t){
-    root.setAttribute('data-theme', t);
-    btn.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
-    try { localStorage.setItem('ma-theme', t); } catch(e){}
+    R.setAttribute('data-theme', t);
+    try{ localStorage.setItem('ma-theme', t); }catch(e){}   /* same 'ma-theme' contract */
+    paint(t);
   }
-  var saved = null;
-  try { saved = localStorage.getItem('ma-theme'); } catch(e){}
-  if (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) saved = 'dark';
-  apply(saved || 'light');
-  btn.addEventListener('click', function(){
-    apply(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+
+  var vtBusy = false;
+  function toggleTheme(){
+    var next = (R.getAttribute('data-theme') === 'dark') ? 'light' : 'dark';
+
+    if (!btn || vtBusy || calm() || typeof d.startViewTransition !== 'function'){
+      apply(next);
+      return;
+    }
+
+    var r  = btn.getBoundingClientRect();
+    var x  = r.left + r.width / 2, y = r.top + r.height / 2;
+    var dx = Math.max(x, window.innerWidth  - x);
+    var dy = Math.max(y, window.innerHeight - y);
+    R.style.setProperty('--ma-vtx', x + 'px');
+    R.style.setProperty('--ma-vty', y + 'px');
+    R.style.setProperty('--ma-vtr', Math.ceil(Math.sqrt(dx * dx + dy * dy)) + 'px');
+
+    R.classList.add('ma-vt');
+    vtBusy = true;
+
+    var vt;
+    try{ vt = d.startViewTransition(function(){ apply(next); }); }
+    catch(e){ vtBusy = false; R.classList.remove('ma-vt'); apply(next); return; }
+
+    var done = function(){ vtBusy = false; R.classList.remove('ma-vt'); };
+    /* `ready` rejects whenever the transition is skipped — swallow it */
+    if (vt && vt.ready && vt.ready['catch']) vt.ready['catch'](noop);
+    if (vt && vt.finished && vt.finished.then) vt.finished.then(done, done);
+    else setTimeout(done, 600);
+  }
+
+  if (btn) btn.addEventListener('click', toggleTheme);
+  /* the head script already resolved data-theme before first paint */
+  paint(R.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  /* ---------------- copy to clipboard ---------------- */
+  function legacyCopy(text){
+    try{
+      var sel  = d.getSelection ? d.getSelection() : null;
+      var prev = (sel && sel.rangeCount) ? sel.getRangeAt(0) : null;
+      var ta   = d.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:-9999px;width:1px;height:1px;opacity:0';
+      d.body.appendChild(ta);
+      ta.select();
+      if (ta.setSelectionRange) ta.setSelectionRange(0, text.length);
+      var ok = !!(d.execCommand && d.execCommand('copy'));
+      d.body.removeChild(ta);
+      if (sel && prev){ sel.removeAllRanges(); sel.addRange(prev); }
+      return ok;
+    }catch(e){ return false; }
+  }
+
+  function setState(b, cls){
+    b.classList.remove('ma-ok', 'ma-no');
+    if (cls) b.classList.add(cls);
+    if (b.maTimer) clearTimeout(b.maTimer);
+    b.maTimer = setTimeout(function(){ b.classList.remove('ma-ok', 'ma-no'); }, 1600);
+  }
+
+  function runCopy(b){
+    var text = b.getAttribute('data-ma-copy') || '';
+    function good(){ setState(b, 'ma-ok'); announce('Email address copied'); }
+    function bad(){  setState(b, 'ma-no'); announce('Copy failed. The address is ' + text); }
+
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      try{
+        navigator.clipboard.writeText(text).then(good, function(){
+          if (legacyCopy(text)) good(); else bad();
+        });
+        return;
+      }catch(e){}
+    }
+    if (legacyCopy(text)) good(); else bad();
+  }
+
+  var copyBtns = d.querySelectorAll('[data-ma-copy]');
+  for (var i = 0; i < copyBtns.length; i++){
+    (function(b){
+      b.addEventListener('click', function(){ runCopy(b); });
+    })(copyBtns[i]);
+  }
+})();
+
+  /* ---------- nav: sliding active indicator + scroll spy ----------
+     Full replacement for the original "// scroll spy" block.
+     No rAF loop exists: every frame of work is scheduled by a real
+     event and coalesced. The scroll path performs zero layout reads —
+     all geometry is cached by measure(), which is the only function
+     in this module that touches the layout. */
+  (function(){
+    var nav = document.getElementById('nav');
+    if (!nav || !nav.classList || !nav.querySelectorAll) return;
+
+    var links = Array.prototype.slice.call(nav.querySelectorAll('a'));
+    if (!links.length) return;
+
+    var secs = links.map(function(a){
+      var h = a.getAttribute('href') || '';
+      return h.charAt(0) === '#' ? document.getElementById(h.slice(1)) : null;
+    });
+
+    var raf = window.requestAnimationFrame
+      ? function(f){ return window.requestAnimationFrame(f); }
+      : function(f){ return window.setTimeout(f, 16); };
+    function nowMs(){ return Date.now ? Date.now() : +new Date(); }
+
+    var ind = document.createElement('span');
+    ind.className = 'manav-ind';
+    ind.setAttribute('aria-hidden', 'true');
+    nav.appendChild(ind);   /* abspos => not a flex item, no layout effect */
+
+    var metrics = [], tops = [], docH = 0, vertical = true;
+    var active = -1, measured = false, jumpSeq = 0;
+    var lockIdx = -1, lockUntil = 0;
+
+    /* Layout mode is read from the nav's own computed flex-direction,
+       so the 940px breakpoint is never duplicated in JS. */
+    function isVertical(){
+      if (window.getComputedStyle){
+        var fd = window.getComputedStyle(nav).flexDirection;
+        if (fd) return fd.indexOf('column') === 0;
+      }
+      return (window.innerWidth || 1200) > 940;
+    }
+
+    /* The only layout reads in this module. clientLeft/clientTop convert
+       nav's border box (getBoundingClientRect) to its padding box, which
+       is what an absolutely positioned child actually resolves against. */
+    function measure(){
+      var nr = nav.getBoundingClientRect();
+      var ox = nr.left + (nav.clientLeft || 0);
+      var oy = nr.top  + (nav.clientTop  || 0);
+      var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var m = [], t = [], i, r, s;
+      for (i = 0; i < links.length; i++){
+        r = links[i].getBoundingClientRect();
+        m.push({ x:r.left - ox, y:r.top - oy, w:r.width, h:r.height });
+        s = secs[i];
+        t.push(s ? s.getBoundingClientRect().top + sy : (i ? t[i - 1] : 0));
+      }
+      vertical = isVertical();
+      docH = Math.max(
+        document.documentElement.scrollHeight,
+        document.body ? document.body.scrollHeight : 0
+      );
+      metrics = m; tops = t; measured = true;
+      nav.classList.add('manav-ready');
+    }
+
+    function place(i, jump){
+      var m = (measured && i >= 0) ? metrics[i] : null;
+      if (!m) return;
+      var x, y, sx, sy2, seq;
+      if (vertical){ x = 0;   y = m.y;           sx = 2;                sy2 = Math.max(m.h, 1); }
+      else         { x = m.x; y = m.y + m.h - 2; sx = Math.max(m.w, 1); sy2 = 2; }
+      if (jump){ jumpSeq++; seq = jumpSeq; ind.classList.add('manav-jump'); }
+      ind.style.transform =
+        'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' +
+        sx.toFixed(3) + ',' + sy2.toFixed(3) + ')';
+      ind.classList.add('manav-lit');
+      if (jump) raf(function(){ raf(function(){
+        if (seq === jumpSeq) ind.classList.remove('manav-jump');
+      }); });
+    }
+
+    function setActive(i, jump){
+      if (i < 0 || i >= links.length) return;
+      if (i === active && !jump) return;      /* one write per change */
+      if (i !== active){
+        active = i;
+        for (var k = 0; k < links.length; k++){
+          if (k === i){
+            links[k].classList.add('on');
+            links[k].setAttribute('aria-current', 'true');
+          } else if (links[k].classList.contains('on')){
+            links[k].classList.remove('on');
+            links[k].removeAttribute('aria-current');
+          }
+        }
+      }
+      place(i, jump);
+    }
+
+    /* pure arithmetic against cached metrics — cannot thrash */
+    function computeActive(){
+      var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var h  = window.innerHeight || document.documentElement.clientHeight || 0;
+      /* bottom of the document always wins, so a short last section
+         (#contact) can still become active */
+      if (docH - h > 4 && sy + h >= docH - 2) return links.length - 1;
+      var probe = sy + Math.max(72, Math.min(h * 0.3, 300)), best = 0, i;
+      for (i = 0; i < tops.length; i++){
+        if (secs[i] && tops[i] <= probe) best = i;
+      }
+      return best;
+    }
+
+    function update(){
+      if (!measured) return;
+      var i = computeActive();
+      if (lockIdx > -1){
+        /* a nav click owns the indicator until the smooth scroll
+           arrives, or the reader takes over, or the lock expires */
+        if (i === lockIdx || nowMs() > lockUntil) lockIdx = -1;
+        else return;
+      }
+      setActive(i, false);
+    }
+
+    var ticking = false;
+    /* named so a merged single scroll dispatcher can call it directly */
+    function onNavScroll(){
+      if (ticking) return;
+      ticking = true;
+      raf(function(){ ticking = false; update(); });
+    }
+
+    var queued = false;
+    function remeasure(){
+      if (queued) return;
+      queued = true;
+      raf(function(){
+        queued = false;
+        measure();
+        var i = lockIdx > -1 ? lockIdx : computeActive();
+        if (i === active) place(i, true); else setActive(i, true);
+      });
+    }
+
+    function release(){ lockIdx = -1; }
+
+    nav.addEventListener('click', function(e){
+      var t = e.target || e.srcElement, i = -1, k;
+      while (t && t !== nav && String(t.nodeName).toLowerCase() !== 'a') t = t.parentNode;
+      if (!t || t === nav) return;
+      for (k = 0; k < links.length; k++){ if (links[k] === t){ i = k; break; } }
+      if (i < 0) return;
+      lockIdx = i; lockUntil = nowMs() + 1200;
+      setActive(i, false);   /* the bar leads the scroll, it doesn't trail it */
+      /* focus is NOT moved here on purpose: same-page fragment navigation
+         already sets the sequential focus navigation starting point to the
+         target section, so Tab continues from there for free. */
+    }, false);
+
+    window.addEventListener('scroll', onNavScroll, {passive:true});
+    window.addEventListener('wheel', release, {passive:true});
+    window.addEventListener('touchstart', release, {passive:true});
+    window.addEventListener('keydown', release, {passive:true});
+    window.addEventListener('resize', remeasure);
+
+    if (typeof ResizeObserver === 'function'){
+      try {
+        var ro = new ResizeObserver(function(){ remeasure(); });
+        ro.observe(nav);
+        var mainEl = document.getElementsByTagName('main')[0];
+        if (mainEl) ro.observe(mainEl);   /* keeps docH honest */
+      } catch(e){}
+    }
+
+    try {
+      if (document.fonts && document.fonts.ready && document.fonts.ready.then){
+        document.fonts.ready.then(function(){ remeasure(); }, function(){});
+      }
+    } catch(e){}
+
+    /* initial state: honour a deep link, then verify after first paint */
+    measure();
+    var start = computeActive();
+    if (!start && window.location.hash){
+      for (var q = 0; q < links.length; q++){
+        if (links[q].getAttribute('href') === window.location.hash){ start = q; break; }
+      }
+    }
+    setActive(start, true);   /* jump: fades in, never slides in */
+    remeasure();
+  })();
+
+})();
+
+/* ══════════════════════════════════════════════════════════════════════
+   LIVE · hero-identity — live Cairo clock + loop gate
+   The entrance choreography is 100% CSS and needs none of this. All this
+   file does is (a) prove the engine can really format Africa/Cairo before
+   showing a time, (b) tick it, (c) toggle html.mah-still so the one CSS
+   loop pauses when the tab is hidden, the rail is offscreen, or the user
+   asked for reduced motion. No rAF. One self-scheduling setTimeout.
+   Shares no identifier with the existing IIFE — paste it after that
+   IIFE's closing "})();" inside the same <script\>.
+   ══════════════════════════════════════════════════════════════════════ */
+(function(){
+  var doc = document, root = doc.documentElement;
+
+  var mq = null;
+  try { if (window.matchMedia) mq = window.matchMedia('(prefers-reduced-motion: reduce)'); } catch(e){}
+  function reduced(){ return !!(mq && mq.matches); }
+  function shown(){ return doc.visibilityState !== 'hidden'; }
+
+  var rail  = doc.querySelector('.rail'),
+      nowEl = doc.getElementById('mahNow'),
+      hmEl  = doc.getElementById('mahHM'),
+      secEl = doc.getElementById('mahS');
+
+  var railOn = true, timer = null, fmt = null;
+
+  /* ---- Cairo clock -----------------------------------------------------
+     Guarded three ways, because a clock that lies is worse than no clock:
+       1. Intl / DateTimeFormat must exist and not throw on the timeZone;
+       2. resolvedOptions().timeZone must actually BE Africa/Cairo — some
+          engines silently substitute the local zone instead of throwing,
+          which would print the viewer's own time labelled "Cairo";
+       3. the output must be plain HH:MM:SS (no AM/PM, no exotic spaces).
+     If any check fails, fmt stays null and #mahNow stays hidden forever —
+     the colophon then reads simply "● OPEN TO WORK", which is correct. */
+  try{
+    if (window.Intl && Intl.DateTimeFormat && nowEl && hmEl && secEl){
+      var f = new Intl.DateTimeFormat('en-GB', {
+        timeZone:'Africa/Cairo',
+        hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23'
+      });
+      var ro = f.resolvedOptions ? f.resolvedOptions() : null;
+      if (ro && ro.timeZone === 'Africa/Cairo' &&
+          /^\d{2}:\d{2}:\d{2}$/.test(f.format(new Date()))) fmt = f;
+    }
+  }catch(e){ fmt = null; }
+
+  if (fmt) nowEl.hidden = false;
+
+  function paint(){
+    var p = fmt.format(new Date()).split(':');
+    if (p.length !== 3) return;
+    if (p[0] === '24') p[0] = '00';                /* engines ignoring hourCycle */
+    hmEl.textContent  = p[0] + ':' + p[1];
+    secEl.textContent = reduced() ? '' : ':' + p[2];
+  }
+
+  function tick(){
+    if (timer){ clearTimeout(timer); timer = null; }
+    if (!fmt || !shown() || !railOn) return;       /* never tick hidden/offscreen */
+    paint();
+    var step = reduced() ? 60000 : 1000;           /* reduced motion: minutes only */
+    timer = setTimeout(tick, step - (Date.now() % step) + 30);
+  }
+
+  /* ---- one gate for everything ---- */
+  function sync(){
+    var live = shown() && railOn && !reduced();
+    if (root.classList) root.classList.toggle('mah-still', !live);
+    tick();
+  }
+
+  if (doc.addEventListener) doc.addEventListener('visibilitychange', sync, false);
+
+  if (rail && 'IntersectionObserver' in window){
+    try{
+      /* Persistent gate, intentionally never unobserved. On desktop the
+         rail is sticky and always intersecting; below 940px it is a top
+         bar that scrolls away, and the clock stops with it. */
+      new IntersectionObserver(function(en){
+        railOn = !!(en[0] && en[0].isIntersecting);
+        sync();
+      }, {threshold:0}).observe(rail);
+    }catch(e){ railOn = true; }
+  }
+
+  if (mq){
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener)  mq.addListener(sync);
+  }
+
+  sync();
+})();
+
+/* ---------- live stats + skill-tag cascade (nt) ----------
+   Paste as its own block after the existing IIFE, or inline above its
+   closing `})();`. Declares no globals and adds no window listeners.   */
+(function(){
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function reduced(){ return !!(mq && mq.matches); }
+
+  var statsRow = document.querySelector('.stats');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.skills .srow'));
+  if (!statsRow && !rows.length) return;
+
+  /* No IO / no rAF / reduce on: the authored markup already IS the final
+     state (numbers intact, hairlines at scaleX(1), tags plain). Bail before
+     touching a single node. */
+  if (!('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
+  if (reduced()) return;
+
+  /* ---------------- stats ---------------- */
+  var jobs = [], rafId = 0, lastT = 0;
+  var live = false, armed = false, started = false, finished = false;
+  var armIO = null, runIO = null, rowIO = null, langEl = null;
+
+  function ease(p){ return 1 - Math.pow(1 - p, 2.2); }
+
+  function schedule(){
+    if (rafId || !live || finished || document.hidden) return;
+    rafId = window.requestAnimationFrame(tick);
+  }
+  function halt(){
+    if (rafId){ window.cancelAnimationFrame(rafId); rafId = 0; }
+    lastT = 0;                       /* resume without a time jump */
+  }
+  function setText(el, s){
+    if (el.firstChild) el.firstChild.nodeValue = s; else el.textContent = s;
+  }
+  function paint(j, e){
+    if (j.el){
+      var v = Math.round(j.to * e);
+      if (v !== j.shown){ j.shown = v; setText(j.el, v + j.suffix); }
+    }
+    if (j.fill) j.fill.style.transform = 'scaleX(' + e + ')';
+  }
+  function settle(j){
+    if (j.el){ setText(j.el, j.to + j.suffix); j.el.classList.remove('nt-live'); }
+    if (j.fill) j.fill.style.removeProperty('transform');   /* back to CSS scaleX(1) */
+  }
+  function tick(now){
+    rafId = 0;
+    var dt = lastT ? Math.min(now - lastT, 50) : 16;
+    lastT = now;
+    var running = false, i, j, p;
+    for (i = 0; i < jobs.length; i++){
+      j = jobs[i];
+      if (j.done) continue;
+      j.t += dt;
+      p = j.t <= j.delay ? 0 : (j.t - j.delay) / j.dur;
+      if (p > 1) p = 1;
+      paint(j, ease(p));
+      if (p === 1){ j.done = true; settle(j); } else running = true;
+    }
+    if (running) schedule(); else finish();
+  }
+  function finish(){
+    if (finished) return;
+    finished = true;
+    halt();
+    if (statsRow) statsRow.classList.remove('nt-armed');
+    if (armIO){ armIO.disconnect(); armIO = null; }
+    if (runIO){ runIO.disconnect(); runIO = null; }
+    document.removeEventListener('visibilitychange', onVis);
+  }
+  function onVis(){
+    if (document.hidden) halt(); else { lastT = 0; schedule(); }
+  }
+
+  /* Arm strictly OFF-SCREEN: zero the hairlines, zero the numerals, hide the
+     EN/AR halves. Nothing here is ever seen changing. */
+  function arm(){
+    if (armed || !statsRow) return;
+    armed = true;
+    statsRow.classList.add('nt-armed');
+    var cells = statsRow.querySelectorAll('.stat .n'), i, el, stat, fill, delay, raw, m, isLang, n;
+    for (i = 0; i < cells.length; i++){
+      el    = cells[i];
+      stat  = el.parentNode;
+      fill  = stat && stat.querySelector ? stat.querySelector('.nt-rule-fill') : null;
+      delay = 80 + i * 80;
+      if (fill) fill.style.transform = 'scaleX(0)';
+
+      isLang = (' ' + el.className + ' ').indexOf(' nt-lang ') > -1;
+      raw    = (el.textContent || '').replace(/^\s+|\s+$/g, '');
+      m      = isLang ? null : /^(\d+)(\D*)$/.exec(raw);
+
+      if (m){
+        n = parseInt(m[1], 10);
+        el.classList.add('nt-live');
+        setText(el, '0' + m[2]);
+        jobs.push({el:el, fill:fill, to:n, suffix:m[2], shown:0,
+                   t:0, delay:delay, dur:Math.min(560 + n * 45, 1100), done:false});
+      } else {
+        if (isLang){ langEl = el; el.style.setProperty('--nt-ld', delay + 'ms'); }
+        /* hairline-only job, keeps this cell on the same clock */
+        jobs.push({el:null, fill:fill, to:0, suffix:'', shown:0,
+                   t:0, delay:delay, dur:700, done:false});
+      }
+    }
+  }
+
+  /* Start the clock only once the row is genuinely on screen. */
+  function start(){
+    arm();
+    if (started) return;
+    started = true;
+    if (langEl) langEl.classList.add('nt-lang-run');
+  }
+
+  if (statsRow){
+    document.addEventListener('visibilitychange', onVis);
+
+    armIO = new IntersectionObserver(function(ents){
+      var i;
+      for (i = 0; i < ents.length; i++){
+        if (ents[i].isIntersecting){
+          arm();
+          if (armIO){ armIO.disconnect(); armIO = null; }
+          return;
+        }
+      }
+    }, {rootMargin:'180px 0px 180px 0px', threshold:0});
+    armIO.observe(statsRow);
+
+    runIO = new IntersectionObserver(function(ents){
+      var vis = false, i;
+      for (i = 0; i < ents.length; i++) if (ents[i].isIntersecting) vis = true;
+      live = vis;
+      if (vis){ start(); lastT = 0; schedule(); } else halt();
+    }, {threshold:0.25});
+    runIO.observe(statsRow);
+  }
+
+  /* ---------------- skills: per-row tag cascade (CSS only, no rAF) ---------------- */
+  function runRow(row, base){
+    var tags = row.querySelectorAll('dd .tag'), i;
+    for (i = 0; i < tags.length; i++){
+      tags[i].style.setProperty('--nt-d', (base + i * 22) + 'ms');
+      tags[i].classList.add('nt-tag-run');
+    }
+  }
+
+  if (rows.length){
+    rowIO = new IntersectionObserver(function(ents, obs){
+      var hit = [], i;
+      for (i = 0; i < ents.length; i++) if (ents[i].isIntersecting) hit.push(ents[i]);
+      if (!hit.length) return;
+      /* rows entering in the same batch cascade top-to-bottom */
+      hit.sort(function(a, b){ return a.boundingClientRect.top - b.boundingClientRect.top; });
+      for (i = 0; i < hit.length; i++){
+        runRow(hit[i].target, 150 + Math.min(i, 5) * 45);
+        obs.unobserve(hit[i].target);
+      }
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.15});
+    for (var r = 0; r < rows.length; r++) rowIO.observe(rows[r]);
+  }
+
+  /* ---------------- OS motion preference flipped mid-session ---------------- */
+  function bail(){
+    if (!reduced()) return;
+    var i, pend, k;
+    for (i = 0; i < jobs.length; i++) if (!jobs[i].done){ jobs[i].done = true; settle(jobs[i]); }
+    finish();
+    if (rowIO){ rowIO.disconnect(); rowIO = null; }
+    pend = document.querySelectorAll('.nt-tag-run,.nt-lang-run');
+    for (k = 0; k < pend.length; k++){
+      pend[k].classList.remove('nt-tag-run');
+      pend[k].classList.remove('nt-lang-run');
+      pend[k].style.removeProperty('--nt-d');
+      pend[k].style.removeProperty('--nt-ld');
+    }
+  }
+  if (mq){
+    if (mq.addEventListener) mq.addEventListener('change', bail);
+    else if (mq.addListener) mq.addListener(bail);
+  }
+})();
+
+/* ══════════════════════════════════════════════════════════════════════
+   CARDS & POINTER — pointer tracking for the card surfaces.
+
+   Keep this as its OWN IIFE, pasted after the file's existing one. Do not
+   fold it into that IIFE: names like `sync`, `bind`, `frame` and `on` are
+   likely picks for the other six dimensions, and an IIFE boundary is free.
+
+   Cost to the page: ONE passive document-level pointermove listener, and
+   only when the pointer is fine AND motion is allowed. No scroll listener,
+   no resize listener, no visibilitychange listener, no persistent rAF loop —
+   frames are requested only while the pointer is genuinely moving over a
+   card, so a hidden tab (where pointermove does not fire) has nothing to
+   pause. The single getBoundingClientRect lives inside the rAF callback and
+   is followed only by writes, so there is no read/write thrash and no cache
+   to invalidate on scroll.
+   ══════════════════════════════════════════════════════════════════════ */
+(function(){
+  var SEL = '.proj, .sec .card, .duo > div, .cta';
+  var ALL = '.proj, .sec .card, .duo, .duo > div, .cta';
+
+  if (!window.matchMedia || !window.requestAnimationFrame ||
+      !window.cancelAnimationFrame || !window.Element ||
+      !Element.prototype.closest ||
+      !document.documentElement.style.setProperty) return;
+
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)');
+  var calm = window.matchMedia('(prefers-reduced-motion:reduce)');
+  var MOVE = window.PointerEvent ? 'pointermove' : 'mousemove';
+
+  var on = false, frame = 0, node = null, host = null, cx = 0, cy = 0;
+
+  function write(){
+    frame = 0;
+    if (!node || !host) return;
+    var b = node.getBoundingClientRect();          /* read  */
+    if (!b.width || !b.height) return;
+    host.style.setProperty('--crd-mx', (cx - b.left).toFixed(1) + 'px');
+    host.style.setProperty('--crd-my', (cy - b.top).toFixed(1) + 'px');
+  }                                                 /* then write */
+
+  function drop(){
+    if (frame){ cancelAnimationFrame(frame); frame = 0; }
+  }
+
+  function track(e){
+    var t   = e.target;
+    var hit = (t && t.nodeType === 1) ? t.closest(SEL) : null;
+
+    cx = e.clientX; cy = e.clientY;
+
+    if (hit !== node){
+      node = hit;
+      host = null;
+      drop();
+      if (node){
+        /* The two .duo halves share their coordinates through the parent so
+           the divider on .break can be driven from a hover on .build. Both
+           halves share a top edge on desktop and a left edge when stacked,
+           which is what makes the shared value correct in each layout. */
+        var p = node.parentNode;
+        host = (p && p.classList && p.classList.contains('duo')) ? p : node;
+        /* Synchronous on entry: :hover paints in the same style flush as
+           pointerover, so deferring this to rAF would start the hairline
+           growing from the previous cursor position for one frame. One rect
+           read per card entry is not thrash. */
+        write();
+      }
+      return;
+    }
+    if (node && !frame) frame = requestAnimationFrame(write);
+  }
+
+  function clear(){
+    var n = document.querySelectorAll(ALL);
+    for (var i = 0; i < n.length; i++){
+      n[i].style.removeProperty('--crd-mx');
+      n[i].style.removeProperty('--crd-my');
+    }
+  }
+
+  function sync(){
+    var want = fine.matches && !calm.matches;
+    if (want === on) return;
+    on = want;
+    if (on){
+      document.addEventListener(MOVE, track, {passive:true});
+    } else {
+      document.removeEventListener(MOVE, track, {passive:true});
+      drop();
+      node = null; host = null;
+      clear();
+    }
+  }
+
+  function bind(mq){
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener)  mq.addListener(sync);
+  }
+
+  bind(fine); bind(calm);
+  sync();
+})();
+
+/* ---------- ambient background layer ---------- */
+/* Self-contained IIFE; leaks no globals. Paste directly after the existing
+   IIFE (or append inside it — either works). Touches only the two nodes it
+   creates: it never reads or writes .rv, .hero, nav, or any content node. */
+(function(){
+  var doc = document, root = doc.documentElement, body = doc.body;
+  if (!body || !root.classList || !window.requestAnimationFrame) return;
+
+  function mq(q){ try { return window.matchMedia ? window.matchMedia(q) : null; } catch(e){ return null; } }
+  var qReduce = mq('(prefers-reduced-motion: reduce)');
+  var qFine   = mq('(hover: hover) and (pointer: fine)');
+  function reduced(){ return !!(qReduce && qReduce.matches); }
+  function finePtr(){ return !!(qFine && qFine.matches); }
+
+  /* passive-listener support probe */
+  var PASSIVE = false;
+  try{
+    var probe = Object.defineProperty({}, 'passive', { get:function(){ PASSIVE = {passive:true}; return true; } });
+    window.addEventListener('amb_probe', null, probe);
+    window.removeEventListener('amb_probe', null, probe);
+  }catch(e){}
+
+  /* ---- build the layer (position:fixed, inserted before .shell => no reflow) ---- */
+  var layer = doc.createElement('div');
+  layer.className = 'amb';
+  layer.setAttribute('aria-hidden','true');
+  layer.innerHTML =
+    '<div class="amb-wash">' +
+      '<span class="amb-b amb-b1"></span>' +
+      '<span class="amb-b amb-b2"></span>' +
+      '<span class="amb-b amb-b3"></span>' +
+    '</div>' +
+    '<div class="amb-grid"></div>';
+  body.insertBefore(layer, body.firstChild);
+  root.classList.add('amb-live');
+
+  var wash = layer.querySelector('.amb-wash');
+  var grid = layer.querySelector('.amb-grid');
+  if (!wash || !grid){ layer.parentNode.removeChild(layer); root.classList.remove('amb-live'); return; }
+
+  /* ---- tuning ---- */
+  var EASE   = 0.09;
+  var WASH_X = 16, WASH_Y = 11, WASH_S = 54;  /* +-16 / +-11 pointer, +-27 scroll */
+  var GRID_X = 7,  GRID_Y = 5;                /* pointer only; graticule stays put on scroll */
+
+  /* ---- state ---- */
+  var pxT=0, pyT=0, pxC=0, pyC=0;   /* pointer target / eased current, -1..1 */
+  var sy=0;                          /* raw scroll fraction 0..1, NOT eased */
+  var vw=1, vh=1, docMax=1;
+  var ticking=false, paused=false, live=false, ptrBound=false, rT=null;
+
+  function readScroll(){
+    var y = window.pageYOffset || root.scrollTop || 0, f = y / docMax;
+    sy = f < 0 ? 0 : (f > 1 ? 1 : f);
+  }
+  /* the only place layout is ever read: init, debounced resize, load, unhide */
+  function measure(){
+    vw = window.innerWidth  || root.clientWidth  || 1;
+    vh = window.innerHeight || root.clientHeight || 1;
+    docMax = Math.max(1, (root.scrollHeight || vh) - vh);
+    readScroll();
+  }
+
+  function paint(){
+    var s = sy - 0.5;
+    wash.style.transform = 'translate3d(' + (pxC*WASH_X).toFixed(2) + 'px,' +
+                                            (pyC*WASH_Y + s*WASH_S).toFixed(2) + 'px,0)';
+    /* integer-rounded so 1px hairlines never resample on fractional DPR */
+    grid.style.transform = 'translate3d(' + Math.round(pxC*GRID_X) + 'px,' +
+                                            Math.round(pyC*GRID_Y) + 'px,0)';
+  }
+
+  function tick(){
+    ticking = false;
+    if (paused || !live) return;
+    var dx = pxT - pxC, dy = pyT - pyC;
+    if (dx*dx + dy*dy > 0.0000008){ pxC += dx*EASE; pyC += dy*EASE; req(); }
+    else { pxC = pxT; pyC = pyT; }   /* settle exactly, then sleep */
+    paint();
+  }
+  function req(){
+    if (ticking || paused || !live) return;
+    ticking = true; window.requestAnimationFrame(tick);
+  }
+
+  /* MERGE POINT A — if another module owns the page scroll dispatcher,
+     delete the window 'scroll' binding below and call ambScroll() from it. */
+  function ambScroll(){ readScroll(); req(); }
+
+  /* MERGE POINT B — if another module owns a global pointermove, delete the
+     pointer bindings below and call ambPointer(e) from it. */
+  function ambPointer(e){
+    if (e.pointerType === 'touch') return;
+    var x = e.clientX, y = e.clientY;
+    if (x == null || y == null) return;
+    var nx = (x/vw)*2 - 1, ny = (y/vh)*2 - 1;
+    pxT = nx < -1 ? -1 : (nx > 1 ? 1 : nx);
+    pyT = ny < -1 ? -1 : (ny > 1 ? 1 : ny);
+    req();
+  }
+  function onLeave(){ pxT = 0; pyT = 0; req(); }
+
+  function onResize(){
+    if (rT) clearTimeout(rT);
+    rT = setTimeout(function(){ rT = null; measure(); req(); }, 150);
+  }
+
+  function bindPointer(){
+    if (ptrBound || !finePtr()) return;
+    ptrBound = true;
+    if (window.PointerEvent){
+      window.addEventListener('pointermove', ambPointer, PASSIVE);
+      doc.addEventListener('pointerleave', onLeave, PASSIVE);
+    } else {
+      window.addEventListener('mousemove', ambPointer, PASSIVE);
+      doc.addEventListener('mouseleave', onLeave, PASSIVE);
+    }
+  }
+  function unbindPointer(){
+    if (!ptrBound) return;
+    ptrBound = false;
+    window.removeEventListener('pointermove', ambPointer, PASSIVE);
+    doc.removeEventListener('pointerleave', onLeave, PASSIVE);
+    window.removeEventListener('mousemove', ambPointer, PASSIVE);
+    doc.removeEventListener('mouseleave', onLeave, PASSIVE);
+    pxT = 0; pyT = 0;
+  }
+
+  function start(){
+    if (live || reduced()) return;
+    live = true;
+    paused = !!doc.hidden;
+    layer.classList.remove('amb-pause');
+    measure();
+    window.addEventListener('scroll', ambScroll, PASSIVE);
+    window.addEventListener('resize', onResize, PASSIVE);
+    window.addEventListener('orientationchange', onResize, PASSIVE);
+    bindPointer();
+    req();
+  }
+  function stop(){
+    live = false;                       /* any queued frame no-ops on wake */
+    window.removeEventListener('scroll', ambScroll, PASSIVE);
+    window.removeEventListener('resize', onResize, PASSIVE);
+    window.removeEventListener('orientationchange', onResize, PASSIVE);
+    unbindPointer();
+    if (rT){ clearTimeout(rT); rT = null; }
+    pxC = pyC = pxT = pyT = 0; sy = 0.5;
+    wash.style.transform = ''; grid.style.transform = '';
+    layer.classList.add('amb-pause');
+  }
+
+  /* tab hidden: stop the rAF loop and the CSS drift. Do NOT clear `ticking`
+     here — rAF does not fire while hidden, so the queued frame resolves on
+     unhide and there is only ever one chain. */
+  doc.addEventListener('visibilitychange', function(){
+    if (doc.hidden){ paused = true; layer.classList.add('amb-pause'); }
+    else { paused = false; layer.classList.remove('amb-pause'); measure(); req(); }
   });
 
-  // scroll reveal
-  var items = document.querySelectorAll('.rv');
-  if ('IntersectionObserver' in window){
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
-      });
-    }, {rootMargin:'0px 0px -8% 0px', threshold:0.05});
-    items.forEach(function(el, i){ el.style.transitionDelay = Math.min(i%6*55,220)+'ms'; io.observe(el); });
-  } else {
-    items.forEach(function(el){ el.classList.add('in'); });
+  function onMQ(q, fn){
+    if (!q) return;
+    if (q.addEventListener) q.addEventListener('change', fn);
+    else if (q.addListener) q.addListener(fn);
   }
+  onMQ(qReduce, function(){ if (reduced()) stop(); else start(); });
+  onMQ(qFine,  function(){ if (!live) return; if (finePtr()) bindPointer(); else { unbindPointer(); req(); } });
 
-  // scroll spy
-  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
-  var secs  = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
-  function spy(){
-    var y = window.scrollY + window.innerHeight*0.28, best = 0;
-    secs.forEach(function(s,i){ if (s && s.offsetTop <= y) best = i; });
-    links.forEach(function(a,i){ a.classList.toggle('on', i === best); });
-  }
-  window.addEventListener('scroll', spy, {passive:true});
-  window.addEventListener('resize', spy);
-  spy();
+  if (reduced()) layer.classList.add('amb-pause'); else start();
+
+  /* webfonts / late layout change the document height */
+  function relayout(){ if (live){ measure(); req(); } }
+  if (doc.readyState === 'complete') relayout();
+  else window.addEventListener('load', relayout, PASSIVE);
 })();
 </script>
 </body>
