@@ -1,37 +1,34 @@
 # Mohamed Ayad — Portfolio
 
-Personal portfolio site. Single self-contained `index.html` — no build step, no dependencies.
+Personal portfolio site. A single self-contained `index.html`: no build step, no framework.
 
 **Live:** https://memo410.github.io
 
 ## Stack
 
-Plain HTML, CSS and vanilla JavaScript. IBM Plex Sans / Mono via Google Fonts, with a system fallback.
+Plain HTML, CSS and JavaScript (ES modules). [three.js](https://threejs.org) r0.143 and
+[Lenis](https://lenis.darkroom.engineering) load from the unpkg CDN through an import map, and
+Inter comes from Google Fonts.
 
 ## Features
 
-- Light and dark themes, following the system preference and remembering the choice.
-  Toggling uses the View Transitions API for a circular wipe from the button, and a
-  blocking head script resolves the stored theme before first paint so dark-mode
-  visitors never see a light flash.
-- Cover with a staggered entrance: mono labels wipe, headings mask-reveal, prose rises.
-  The whole sequence settles in under a second.
-- Live signals — an "open to work" status dot and a ticking Cairo clock (shown only if
-  `Intl` actually resolves `Africa/Cairo`).
-- Ambient background: a slow-drifting aurora wash over a technical hairline grid, with
-  damped pointer parallax on fine pointers only.
-- Scroll-driven reveals with per-container stagger, a reading-progress rule down the
-  rail, and section rules that draw themselves in.
-- Animated stat count-up with hairline meters, and a per-row cascade of the skill tags.
-- Pointer-tracked spotlight on the card surfaces, and a sliding scroll-spy indicator
-  that animates between nav items.
+- A fixed, full-viewport WebGL Earth behind the whole page. It has day/night shading with city
+  lights, ocean glint and flow, a rim light, three drifting cloud shells, a blue atmosphere halo,
+  a twinkling starfield, ambient motes and gold radar-ping markers on land, all composited through
+  bloom and a corner-flame pass.
+- Scroll choreography: the planet rises behind the hero, zooms out and swings left, then right,
+  and settles behind the contact section, turning as you scroll.
+- Glass sections over a deep-space palette with a mint accent, staggered fade-up reveals, and
+  Lenis smooth scrolling.
+- Live signals in the hero: an "open to work" status and the current time in Cairo (shown only
+  if the browser's `Intl` resolves `Africa/Cairo`).
 - Copy-to-clipboard on the email address, with a polite screen-reader announcement.
-- Responsive from mobile through desktop.
-- Respects `prefers-reduced-motion` throughout: every animation is neutralised, every
-  rAF loop and listener is torn down, and each element's resting state is its natural
-  one — so the page is correct, never blank, if the motion never runs.
-- Degrades cleanly with JavaScript disabled or an early script error: nothing is hidden
-  behind an animation that has to complete.
+- Fixed navigation that turns to glass once you scroll and highlights the section on screen.
+- Responsive from phone to desktop.
+- Respects `prefers-reduced-motion`: reveals show immediately, and Lenis, the planet's entrance
+  and the status pulse are switched off.
+- The content never depends on the 3D scene. If WebGL, the CDN or the planet assets fail, the
+  page still reads on a plain dark background.
 
 ## Project links
 
@@ -41,7 +38,13 @@ publicly listed on Google Play.
 
 ## Local preview
 
-Open `index.html` in a browser. That's it.
+Open `index.html` in a browser. It needs a network connection for the CDN scripts, the fonts and
+the planet assets.
+
+## Credits
+
+The planet scene is ported from the "Ascend" WebGL template. Its planet, night-lights and cloud
+assets load from the template's public asset bucket at `api.getlayers.ai`.
 
 ## Contact
 
