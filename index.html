@@ -10,7 +10,7 @@
 <meta property="og:type" content="profile">
 <meta property="og:title" content="Mohamed Ayad - Flutter Developer">
 <meta property="og:description" content="Three-plus years building production Flutter applications for enterprise clients, with a cybersecurity engineering background.">
-<meta property="og:url" content="https://memo410.github.io">
+<meta property="og:url" content="https://memo410.github.io/protofolio/">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2304060f'/%3E%3Ctext x='32' y='41' font-family='Inter,Arial,sans-serif' font-size='24' font-weight='800' fill='%235df0a8' text-anchor='middle'%3EMA%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,13 +23,21 @@
   --accent:#5df0a8; --accent-2:#2fd38a; --accent-ink:#032018;
   --gold:#ffd27a;
   --glass:rgba(12,18,38,.55); --glass-2:rgba(16,24,48,.65);
+  --blur:blur(14px); --blur-lg:blur(18px); --blur-sm:blur(10px); --nav-bg:rgba(4,6,15,.66); --outline-bg:rgba(8,12,26,.55);
   --radius:18px; --radius-lg:26px; --maxw:1180px;
   --shadow:0 30px 80px -30px rgba(0,0,0,.75);
   --font:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   color-scheme:dark;
 }
+/* "Lite" (touch devices, or any device the planet script's frame-time governor finds falling
+   behind): denser glass instead of the frosted blur. Each blurred panel is re-rendered on every
+   frame the planet moves behind it, which is what makes scrolling stutter on weaker GPUs. */
+@media (hover:none) and (pointer:coarse){
+  :root{--glass:rgba(11,17,35,.86);--glass-2:rgba(14,21,43,.9);--blur:none;--blur-lg:none;--blur-sm:none;--nav-bg:#04060f;--outline-bg:rgba(8,12,26,.84)}
+}
+html.lite{--glass:rgba(11,17,35,.86);--glass-2:rgba(14,21,43,.9);--blur:none;--blur-lg:none;--blur-sm:none;--nav-bg:#04060f;--outline-bg:rgba(8,12,26,.84)}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
 body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
@@ -38,13 +46,9 @@ button{font:inherit;color:inherit}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .skip{position:fixed;left:16px;top:-64px;z-index:30;padding:10px 18px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:14px;font-weight:600;transition:top .2s ease}
 .skip:focus{top:16px}
-/* Lenis */
-html.lenis,html.lenis body{height:auto}
-.lenis.lenis-smooth{scroll-behavior:auto !important}
-.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
-.lenis.lenis-stopped{overflow:hidden}
-/* staggered scroll-reveal */
-[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.22,.7,.2,1),transform .7s cubic-bezier(.22,.7,.2,1);transition-delay:var(--rd,0ms);will-change:opacity,transform}
+/* staggered scroll-reveal. No will-change: on every element still waiting to reveal it would
+   hold dozens of compositor layers for the whole page; the browser promotes them while they animate. */
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.22,.7,.2,1),transform .7s cubic-bezier(.22,.7,.2,1);transition-delay:var(--rd,0ms)}
 [data-reveal].in{opacity:1;transform:none}
 /* fixed WebGL planet behind everything, never grabs pointer/scroll */
 .planet-canvas{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;pointer-events:none}
@@ -54,6 +58,13 @@ html.lenis,html.lenis body{height:auto}
 :root{--halo:0 1px 2px rgba(4,6,15,.9),0 0 16px rgba(4,6,15,.82),0 0 40px rgba(4,6,15,.55)}
 .eyebrow{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:18px;text-shadow:var(--halo)}
 .section-head{max-width:680px;margin:0 auto clamp(40px,5vw,64px);text-align:center}
+/* A soft dark pool behind headings and lead copy that float straight over the planet, so they
+   stay readable wherever the scroll choreography puts a bright desert or ice cap behind them. */
+.section-head,.showcase-copy,.hero-sub,.logos-row,.footer-brand{position:relative;isolation:isolate}
+.section-head::before,.showcase-copy::before,.hero-sub::before,.logos-row::before,.footer-brand::before{content:"";position:absolute;inset:-40px -16px;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(4,6,15,.66),rgba(4,6,15,.38) 55%,transparent)}
+.hero-sub::before{inset:-28px -24px}
+/* the logo row spans the page; its pool covers just the names and the label above them */
+.logos-row::before{top:-46px;bottom:-22px;left:max(0px,calc(50% - 400px));right:max(0px,calc(50% - 400px))}
 .section-head h2,.showcase-copy h2,.cta-card h2{font-size:clamp(30px,4.4vw,50px);font-weight:800;line-height:1.05;letter-spacing:-.02em;text-shadow:0 2px 40px rgba(0,0,0,.6)}
 .section-head p{margin-top:18px;color:var(--muted);font-size:18px;line-height:1.65;text-shadow:var(--halo)}
 /* buttons */
@@ -62,7 +73,7 @@ html.lenis,html.lenis body{height:auto}
 .btn-primary{color:var(--accent-ink);background:linear-gradient(180deg,var(--accent),var(--accent-2));box-shadow:0 10px 30px -8px rgba(93,240,168,.55),inset 0 1px 0 rgba(255,255,255,.4)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 38px -8px rgba(93,240,168,.7)}
 /* a darker glass base than Ascend's: these buttons often sit on the planet's bright limb */
-.btn-outline{color:var(--ink);background:rgba(8,12,26,.55);border-color:var(--line-strong);backdrop-filter:blur(10px)}
+.btn-outline{color:var(--ink);background:var(--outline-bg);border-color:var(--line-strong);-webkit-backdrop-filter:var(--blur-sm);backdrop-filter:var(--blur-sm)}
 .btn-outline:hover{background:rgba(22,30,56,.75);transform:translateY(-2px)}
 .btn-ghost{color:var(--ink);background:rgba(255,255,255,.05);border-color:var(--line-strong);padding:9px 18px}
 .btn-ghost:hover{background:rgba(255,255,255,.1)}
@@ -71,9 +82,9 @@ html.lenis,html.lenis body{height:auto}
 
 /* ---------- nav (fixed; turns to glass once the page scrolls) ---------- */
 .nav-bar{position:fixed;top:0;left:0;right:0;z-index:10;border-bottom:1px solid transparent;transition:background-color .3s ease,border-color .3s ease}
-.nav-bar.scrolled{background:rgba(4,6,15,.66);border-bottom-color:var(--line);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.nav-bar.scrolled{background:var(--nav-bg);border-bottom-color:var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .nav{max-width:var(--maxw);margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.brand{display:inline-flex;align-items:center;gap:11px;font-weight:800;font-size:16px;letter-spacing:.04em}
+.brand{display:inline-flex;align-items:center;gap:11px;font-weight:800;font-size:16px;letter-spacing:.04em;white-space:nowrap}
 .brand-mark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(180deg,var(--accent),var(--accent-2));color:var(--accent-ink);font-size:11.5px;font-weight:800;letter-spacing:0;box-shadow:0 6px 18px -6px rgba(93,240,168,.6)}
 .nav-links{display:flex;align-items:center;gap:28px;font-size:14.5px;color:var(--muted)}
 .nav-links a{position:relative;transition:color .2s ease}
@@ -82,9 +93,14 @@ html.lenis,html.lenis body{height:auto}
 .nav-links a.on::after{opacity:1;transform:none}
 
 /* ---------- hero ---------- */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;padding-top:72px;background:radial-gradient(125% 62% at 50% -10%,rgba(4,6,15,.82) 0%,rgba(4,6,15,.28) 44%,transparent 68%)}
-.hero-inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px;transform:translateY(-8vh)}
-.status{display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;padding:7px 15px 7px 12px;border-radius:999px;font-size:13px;font-weight:500;color:var(--muted);background:rgba(12,18,38,.55);border:1px solid var(--line-strong);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;padding-top:88px;background:radial-gradient(125% 62% at 50% -10%,rgba(4,6,15,.82) 0%,rgba(4,6,15,.28) 44%,transparent 68%)}
+/* The copy sits above centre: the free space splits 1:3 above and below it, which lifts it clear
+   of the planet's horizon on tall screens. On short ones (a 1366x768 laptop) the spacers give way
+   first, so the copy settles just under the nav instead of sliding behind it. */
+.hero-inner{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px}
+.hero-inner::before{content:"";flex:1 1 0}
+.hero-inner::after{content:"";flex:3 1 0}
+.status{display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;padding:7px 15px 7px 12px;border-radius:999px;font-size:13px;font-weight:500;color:var(--muted);background:var(--glass);border:1px solid var(--line-strong);-webkit-backdrop-filter:var(--blur-sm);backdrop-filter:var(--blur-sm)}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:ping 2.4s ease-out infinite}
 .status b{color:var(--ink);font-weight:600}
 .status-time{display:inline-flex;align-items:center;gap:10px}
@@ -114,11 +130,11 @@ html.lenis,html.lenis body{height:auto}
   .about .showcase-grid{grid-template-columns:1.05fr 1fr}
   .about .panel{order:-1}
 }
-.panel{position:relative;padding:24px;border-radius:var(--radius-lg);background:var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.panel{position:relative;padding:24px;border-radius:var(--radius-lg);background:var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:var(--blur-lg);backdrop-filter:var(--blur-lg)}
 .panel::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(160deg,rgba(93,240,168,.35),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none}
-.panel-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.panel-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px;margin-bottom:18px}
 .panel-title{font-size:15px;font-weight:700;letter-spacing:-.01em}
-.pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--accent);padding:5px 11px;border-radius:999px;background:rgba(93,240,168,.08);border:1px solid rgba(93,240,168,.22)}
+.pill{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;font-size:12.5px;font-weight:600;color:var(--accent);padding:5px 11px;border-radius:999px;background:rgba(93,240,168,.08);border:1px solid rgba(93,240,168,.22)}
 .duo-block{padding:20px 20px 22px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid var(--line)}
 .duo-block + .duo-block{margin-top:12px}
 .duo-k{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
@@ -128,13 +144,13 @@ html.lenis,html.lenis body{height:auto}
 .duo-block.break .duo-k span{background:rgba(255,210,122,.08);border-color:rgba(255,210,122,.22)}
 .duo-block p{margin-top:12px;font-size:15px;line-height:1.6;color:var(--muted)}
 .stats{margin-top:clamp(48px,7vw,84px);display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.stat{text-align:center;padding:30px 18px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.stat{text-align:center;padding:30px 18px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .stat-value{font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .stat-label{margin-top:8px;font-size:14px;color:var(--muted)}
 
 /* ---------- cards (skills, cloud & security, education) ---------- */
 .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.card{position:relative;overflow:hidden;padding:30px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.card{position:relative;overflow:hidden;padding:30px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 /* hover timing applies once the reveal has settled (the script removes data-reveal) */
 .card:not([data-reveal]),.proj:not([data-reveal]){transition:transform .35s cubic-bezier(.22,.7,.2,1),border-color .25s ease,background .25s ease}
 .card::before,.proj::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(120% 120% at 0% 0%,rgba(93,240,168,.08),transparent 45%);opacity:0;transition:opacity .3s ease;pointer-events:none}
@@ -154,7 +170,7 @@ html.lenis,html.lenis body{height:auto}
 .card .chips{margin-top:16px}
 
 /* ---------- experience ---------- */
-.role{position:relative;max-width:900px;margin:0 auto;padding:clamp(26px,4vw,40px);border-radius:var(--radius-lg);background:var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.role{position:relative;max-width:900px;margin:0 auto;padding:clamp(26px,4vw,40px);border-radius:var(--radius-lg);background:var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:var(--blur-lg);backdrop-filter:var(--blur-lg)}
 .role-top{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap}
 .role-co{display:inline-flex;align-items:center;gap:12px;font-size:15px;font-weight:700}
 .role-co .card-icon{margin:0;width:40px;height:40px;border-radius:11px}
@@ -169,7 +185,7 @@ html.lenis,html.lenis body{height:auto}
 
 /* ---------- projects ---------- */
 .projects{display:grid;gap:18px}
-.proj{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.proj{position:relative;overflow:hidden;border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 .proj--feature{display:grid;grid-template-columns:clamp(220px,30%,300px) 1fr}
 .proj-side{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:28px}
 .proj-body{padding:28px 30px;border-left:1px solid var(--line)}
@@ -195,8 +211,10 @@ html.lenis,html.lenis body{height:auto}
 .card .school{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
 
 /* ---------- contact + footer ---------- */
-.section.cta{padding-bottom:clamp(36px,5vw,56px)}
-.cta-card{max-width:760px;margin:0 auto;text-align:center;padding:clamp(48px,7vw,80px) clamp(28px,5vw,64px);border-radius:var(--radius-lg);background:radial-gradient(120% 140% at 50% 0%,rgba(93,240,168,.12),transparent 55%),var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.section.cta{padding-bottom:0}
+/* the page footer sits outside <main>, on the same column as the sections */
+.site-footer{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 24px clamp(36px,5vw,56px)}
+.cta-card{max-width:760px;margin:0 auto;text-align:center;padding:clamp(48px,7vw,80px) clamp(28px,5vw,64px);border-radius:var(--radius-lg);background:radial-gradient(120% 140% at 50% 0%,rgba(93,240,168,.12),transparent 55%),var(--glass-2);border:1px solid var(--line-strong);box-shadow:var(--shadow);-webkit-backdrop-filter:var(--blur-lg);backdrop-filter:var(--blur-lg)}
 .cta-card p{margin:18px auto 36px;max-width:540px;color:var(--muted);font-size:18px;line-height:1.65}
 .cta-card .hero-actions{margin-top:0}
 .btn-copy .when-done{display:none}
@@ -225,16 +243,21 @@ html.lenis,html.lenis body{height:auto}
   .stats{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:820px){
-  .nav-links{gap:20px}
+  .nav-links{gap:16px;font-size:14px}
   .proj--feature{grid-template-columns:1fr}
   .proj-side{padding:24px 24px 18px}
   .proj-body{border-left:0;border-top:1px solid var(--line);padding:20px 24px 24px}
   .proj-grid,.duo-grid{grid-template-columns:1fr}
 }
+/* seven links leave no room for the bar's own Email button on tablets; Contact is one of them */
+@media (min-width:721px) and (max-width:940px){
+  .nav > .btn-ghost{display:none}
+}
 @media (max-width:720px){
   .nav-links{display:none}
   .nav{padding:14px 20px}
   .section{padding:clamp(64px,16vw,96px) 20px}
+  .site-footer{padding-left:20px;padding-right:20px}
 }
 @media (max-width:560px){
   .feature-grid{grid-template-columns:1fr}
@@ -250,14 +273,29 @@ html.lenis,html.lenis body{height:auto}
   .logos-row{gap:14px 20px}
   .logo{font-size:15px}
   .status{font-size:12px}
+  .footer-cols{flex-wrap:wrap;gap:24px 28px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   [data-reveal]{opacity:1;transform:none;transition:none}
+  .card:not([data-reveal]),.proj:not([data-reveal]){transition:none}
   .status-dot{animation:none}
 }
+/* whatever has keyboard focus is shown at once, not after its fade */
+[data-reveal]:focus-within{opacity:1;transform:none;transition:none}
+/* printing (or saving as PDF): every section, not just the part that has been scrolled into view */
+@media print{
+  [data-reveal]{opacity:1!important;transform:none!important;transition:none!important}
+  .planet-canvas,.skip{display:none}
+  .nav-bar{position:absolute}
+  *,*::before,*::after{text-shadow:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  /* the panel's masked ring would print as a white sheet over its text; the pools as smudges */
+  .panel::after,.section-head::before,.showcase-copy::before,.hero-sub::before,.logos-row::before,.footer-brand::before{display:none}
+  /* gradient-clipped text has no fill of its own once backgrounds are dropped */
+  .hero-claim em,.stat-value{background:none!important;color:#0a6b43!important;-webkit-text-fill-color:currentColor!important}
+}
 </style>
-<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}.nav-bar{background:var(--nav-bg);border-bottom-color:var(--line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}.btn-copy{display:none}</style></noscript>
 <script type="importmap">
 { "imports": {
   "three": "https://unpkg.com/three@0.143.0/build/three.module.js",
@@ -280,10 +318,8 @@ html.lenis,html.lenis body{height:auto}
 <link rel="modulepreload" href="https://unpkg.com/three@0.143.0/examples/jsm/utils/BufferGeometryUtils.js">
 <link rel="modulepreload" href="https://unpkg.com/three@0.143.0/examples/jsm/loaders/DRACOLoader.js">
 <link rel="modulepreload" href="https://unpkg.com/three@0.143.0/examples/jsm/controls/OrbitControls.js">
-<link rel="modulepreload" href="https://unpkg.com/lenis@1.3.23/dist/lenis.mjs">
 <link rel="preload" href="https://api.getlayers.ai/storage/v1/object/public/public/assets/ascend-d9857ad1f2/planet.glb" as="fetch" crossorigin>
 <link rel="preload" href="https://api.getlayers.ai/storage/v1/object/public/public/assets/ascend-d9857ad1f2/planet-lights.glb" as="fetch" crossorigin>
-<link rel="preload" href="https://api.getlayers.ai/storage/v1/object/public/public/assets/ascend-d9857ad1f2/planet-clouds.png" as="image" crossorigin>
 <link rel="preload" href="https://www.gstatic.com/draco/versioned/decoders/1.5.5/draco_wasm_wrapper.js" as="fetch" crossorigin>
 <link rel="preload" href="https://www.gstatic.com/draco/versioned/decoders/1.5.5/draco_decoder.wasm" as="fetch" crossorigin>
 </head>
@@ -293,7 +329,7 @@ html.lenis,html.lenis body{height:auto}
 
 <div class="page" id="top">
 
-  <div class="nav-bar">
+  <header class="nav-bar">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">MA</span>Mohamed Ayad</a>
       <div class="nav-links">
@@ -302,44 +338,45 @@ html.lenis,html.lenis body{height:auto}
         <a href="#experience">Experience</a>
         <a href="#projects">Projects</a>
         <a href="#security">Security</a>
+        <a href="#education">Education</a>
         <a href="#contact">Contact</a>
       </div>
       <a class="btn btn-ghost" href="mailto:mohamedezatayad2005@gmail.com">Email me</a>
     </nav>
-  </div>
-
-  <!-- ============ HERO ============ -->
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="status" data-reveal style="--rd:0ms">
-        <span class="status-dot" aria-hidden="true"></span><b>Open to work</b>
-        <span class="status-time" hidden>Cairo <time data-cairo-time>--:--</time></span>
-      </p>
-      <h1 class="hero-title" data-reveal style="--rd:60ms">Mohamed Ayad<span class="dot">.</span></h1>
-      <p class="hero-claim" data-reveal style="--rd:140ms">I build production apps — and I know how they <em>break</em>.</p>
-      <p class="hero-sub" data-reveal style="--rd:220ms">Flutter &amp; Dart developer in Cairo, Egypt — enterprise apps in production, Clean Architecture, real-time systems, and a bug-bounty hunter’s eye for what breaks.</p>
-      <div class="hero-actions" data-reveal style="--rd:300ms">
-        <a class="btn btn-primary" href="#projects">View projects
-          <svg class="ico ico-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-        <a class="btn btn-outline" href="#contact">Get in touch</a>
-      </div>
-    </div>
-
-    <div class="logos" data-reveal style="--rd:420ms">
-      <p class="logos-label">Shipping with</p>
-      <div class="logos-row">
-        <span class="logo">Flutter</span>
-        <span class="logo">Dart</span>
-        <span class="logo">BLoC</span>
-        <span class="logo">Firebase</span>
-        <span class="logo">Socket.IO</span>
-        <span class="logo">AWS</span>
-      </div>
-    </div>
   </header>
 
   <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <p class="status" data-reveal style="--rd:0ms">
+          <span class="status-dot" aria-hidden="true"></span><b>Open to work</b>
+          <span class="status-time" hidden>Cairo <time data-cairo-time datetime="00:00">--:--</time></span>
+        </p>
+        <h1 class="hero-title" id="hero-title" data-reveal style="--rd:60ms">Mohamed Ayad<span class="dot">.</span></h1>
+        <p class="hero-claim" data-reveal style="--rd:140ms">I build production apps — and I know how they <em>break</em>.</p>
+        <p class="hero-sub" data-reveal style="--rd:220ms">Flutter &amp; Dart developer in Cairo, Egypt — enterprise apps in production, Clean Architecture, real-time systems, and a bug-bounty hunter’s eye for what breaks.</p>
+        <div class="hero-actions" data-reveal style="--rd:300ms">
+          <a class="btn btn-primary" href="#projects">View projects
+            <svg class="ico ico-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn-outline" href="#contact">Get in touch</a>
+        </div>
+      </div>
+
+      <div class="logos" data-reveal style="--rd:420ms">
+        <p class="logos-label">Shipping with</p>
+        <div class="logos-row">
+          <span class="logo">Flutter</span>
+          <span class="logo">Dart</span>
+          <span class="logo">BLoC</span>
+          <span class="logo">Firebase</span>
+          <span class="logo">Socket.IO</span>
+          <span class="logo">AWS</span>
+        </div>
+      </div>
+    </section>
 
     <!-- ============ ABOUT ============ -->
     <section class="section about" id="about">
@@ -519,7 +556,7 @@ html.lenis,html.lenis body{height:auto}
           <article class="proj" data-reveal style="--rd:90ms">
             <div class="proj-top">
               <span class="proj-n">05</span>
-              <span class="badges"><span class="badge badge--kind">Flutter</span><a class="badge badge--store" href="https://play.google.com/store/apps/details?id=com.nada.city" target="_blank" rel="noopener noreferrer">Google Play<svg class="ico ico-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg><span class="sr-only"> (opens in a new tab)</span></a></span>
+              <span class="badges"><span class="badge badge--kind">Flutter</span><a class="badge badge--store" href="https://play.google.com/store/apps/details?id=com.nada.city" target="_blank" rel="noopener noreferrer">Google Play<svg class="ico ico-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg><span class="sr-only"> (opens in a new tab)</span></a><a class="badge badge--store" href="https://apps.apple.com/us/app/nada-city/id6785543617" target="_blank" rel="noopener noreferrer">App Store<svg class="ico ico-2" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg><span class="sr-only"> (opens in a new tab)</span></a></span>
             </div>
             <h3>Nada City — City Services Application</h3>
             <ul class="chips" aria-label="Stack"><li>Flutter</li><li>BLoC</li><li>Modular architecture</li></ul>
@@ -597,7 +634,7 @@ html.lenis,html.lenis body{height:auto}
         </article>
         <article class="card" data-reveal style="--rd:90ms">
           <div class="card-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
-          <span class="card-k">Certifications</span>
+          <span class="card-k" role="heading" aria-level="3">Certifications</span>
           <ul class="certs">
             <li>Flutter Diploma <span>Instant</span></li>
             <li>AWS Cloud Practitioner Essentials <span>AWS</span></li>
@@ -607,7 +644,7 @@ html.lenis,html.lenis body{height:auto}
       </div>
     </section>
 
-    <!-- ============ CONTACT + FOOTER ============ -->
+    <!-- ============ CONTACT ============ -->
     <section class="section cta" id="contact">
       <div class="cta-card">
         <span class="eyebrow" data-reveal style="--rd:60ms">Open to work</span>
@@ -624,36 +661,40 @@ html.lenis,html.lenis body{height:auto}
           </button>
         </div>
         <div class="contact-line" data-reveal style="--rd:360ms">
+          <a href="mailto:mohamedezatayad2005@gmail.com">mohamedezatayad2005@gmail.com</a>
           <a href="tel:+201127902941">+20 112 790 2941</a>
-          <a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://github.com/memo410/memo410" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>
+          <a href="https://github.com/memo410" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
         </div>
         <p class="sr-only" aria-live="polite" data-copy-status></p>
       </div>
-
-      <footer class="footer">
-        <div class="footer-brand">
-          <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">MA</span>Mohamed Ayad</a>
-          <p>Flutter &amp; Dart developer in Cairo, Egypt — building production apps with a security-first eye.</p>
-        </div>
-        <div class="footer-cols">
-          <div class="footer-col">
-            <h3>Navigate</h3>
-            <ul><li><a href="#about">About</a></li><li><a href="#skills">Skills</a></li><li><a href="#projects">Projects</a></li><li><a href="#education">Education</a></li></ul>
-          </div>
-          <div class="footer-col">
-            <h3>Contact</h3>
-            <ul><li><a href="mailto:mohamedezatayad2005@gmail.com">Email</a></li><li><a href="tel:+201127902941">Phone</a></li><li><a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://github.com/memo410/memo410" target="_blank" rel="noopener noreferrer">GitHub</a></li></ul>
-          </div>
-        </div>
-      </footer>
-      <p class="copyright">© <span data-year>2026</span> Mohamed Ayad</p>
     </section>
 
   </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer">
+      <div class="footer-brand">
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">MA</span>Mohamed Ayad</a>
+        <p>Flutter &amp; Dart developer in Cairo, Egypt — building production apps with a security-first eye.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h3>Navigate</h3>
+          <ul><li><a href="#about">About</a></li><li><a href="#skills">Skills</a></li><li><a href="#experience">Experience</a></li><li><a href="#projects">Projects</a></li><li><a href="#security">Security</a></li><li><a href="#education">Education</a></li><li><a href="#contact">Contact</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contact</h3>
+          <ul><li><a href="mailto:mohamedezatayad2005@gmail.com">Email</a></li><li><a href="tel:+201127902941">Phone</a></li><li><a href="https://www.linkedin.com/in/mohamedayad14" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a></li><li><a href="https://github.com/memo410" target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a></li></ul>
+        </div>
+      </div>
+    </div>
+    <p class="copyright">© <span data-year>2026</span> Mohamed Ayad</p>
+  </footer>
 </div>
 
-<!-- Page chrome: year, staggered reveal, Lenis, Cairo clock, copy button, nav state.
+<!-- Page chrome: year, staggered reveal, Cairo clock, copy button, nav state.
      Kept separate from the WebGL module so a CDN or GPU failure there can never leave
      content hidden. -->
 <script type="module">
@@ -662,23 +703,30 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 for (const el of document.querySelectorAll('[data-year]')) el.textContent = String(new Date().getFullYear());
 
 // Staggered reveal. Once an element's reveal has finished, drop the attribute (it keeps
-// .in) so its own hover transitions run without the stagger delay.
-const settle = (el) => {
-  const delay = parseFloat(getComputedStyle(el).getPropertyValue('--rd')) || 0;
-  setTimeout(() => el.removeAttribute('data-reveal'), 700 + delay + 100);
-};
+// .in) so its own hover transitions run without the stagger delay. Waiting on the actual
+// transitions, not a timer, means a busy main thread can't cut a fade short.
+const settle = (el) => (el.getAnimations ? Promise.allSettled(el.getAnimations().map((a) => a.finished)) : Promise.resolve())
+  .then(() => el.removeAttribute('data-reveal'));
 const revealEls = document.querySelectorAll('[data-reveal]');
 if (reduceMotion || !('IntersectionObserver' in window)) {
-  revealEls.forEach((el) => el.classList.add('in'));
+  revealEls.forEach((el) => { el.classList.add('in'); el.removeAttribute('data-reveal'); });
 } else {
   const io = new IntersectionObserver((entries) => {
     for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
+      // The hero always plays its entrance on load: its logo strip sits on the bottom edge of
+      // the first screen, where a tall viewport would keep it under the 18% threshold.
+      if (!entry.target.closest('.hero')) {
+        if (!entry.isIntersecting) continue;
+        // Everything else waits until 18% of it is on screen, unless it is too tall to ever get
+        // there (a long project card at 400% zoom): then entering the screen is enough.
+        const rootH = entry.rootBounds ? entry.rootBounds.height : window.innerHeight;
+        if (entry.intersectionRatio < 0.18 && entry.boundingClientRect.height * 0.18 < rootH) continue;
+      }
       entry.target.classList.add('in');
       io.unobserve(entry.target);
       settle(entry.target);
     }
-  }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+  }, { threshold: [0, 0.18], rootMargin: '0px 0px -8% 0px' });
   revealEls.forEach((el) => io.observe(el));
 }
 
@@ -717,6 +765,7 @@ copyBtn?.addEventListener('click', async () => {
     ta.select();
     try { ok = document.execCommand('copy'); } catch { ok = false; }
     ta.remove();
+    copyBtn.focus({ preventScroll: true }); // the textarea took focus; hand it back
   }
   const label = copyBtn.querySelector('.copy-label');
   copyBtn.classList.toggle('copied', ok);
@@ -726,6 +775,7 @@ copyBtn?.addEventListener('click', async () => {
   copyTimer = setTimeout(() => {
     copyBtn.classList.remove('copied');
     label.textContent = 'Copy address';
+    copyStatus.textContent = ''; // so the same message is announced again next time
   }, 2200);
 });
 
@@ -748,24 +798,12 @@ if ('IntersectionObserver' in window) {
       }
     }
   }, { rootMargin: '-45% 0px -50% 0px' });
-  for (const id of linkFor.keys()) {
-    const section = document.getElementById(id);
-    if (section) spy.observe(section);
-  }
+  // The hero is watched too: it has no link, so reaching it switches every link off.
+  for (const section of document.querySelectorAll('.hero, main > section')) spy.observe(section);
 }
 
-if (!reduceMotion) {
-  try {
-    const { default: Lenis } = await import('https://unpkg.com/lenis@1.3.23/dist/lenis.mjs');
-    // lerp smoothing instead of the template's 1.15 s eased glide: still smooth, but the page
-    // answers the wheel straight away rather than trailing behind it
-    const lenis = new Lenis({ lerp: 0.12, smoothWheel: true, touchMultiplier: 1.5 });
-    const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
-    requestAnimationFrame(raf);
-  } catch (err) {
-    console.warn('[portfolio] Lenis unavailable, falling back to native scroll.', err);
-  }
-}
+// Scrolling stays native (the Ascend template smooths it with Lenis): the browser scrolls on its
+// compositor thread, so the page keeps moving even while the main thread is busy.
 </script>
 
 <!-- The planet: fixed full-viewport WebGL scene (three r0.143). -->
@@ -776,7 +814,6 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { GammaCorrectionShader } from 'three/examples/jsm/shaders/GammaCorrectionShader.js';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -1040,14 +1077,28 @@ function startPlanet() {
   // antialias is off: the canvas only ever receives the final pass's full-screen triangle, so
   // multisampling it would cost bandwidth and smooth nothing.
   const renderer = new THREE.WebGL1Renderer({ canvas, antialias: false });
-  // The canvas renders at no more than 1.5x CSS pixels (the planet is soft and glowy, and all
-  // text is HTML, so extra density only costs GPU time); the governor in the frame loop steps
-  // this down further on GPUs that can't keep up.
-  const MAX_PIXEL_RATIO = 1.5;
+  const gl = renderer.getContext();
+  // Where the browser can compile shaders in the background, they are (see compileAhead).
+  // three's error check would wait on each one, so the check runs once they're done instead.
+  const parallelCompile = gl.getExtension('KHR_parallel_shader_compile');
+  if (parallelCompile) renderer.debug.checkShaderErrors = false;
+
+  // Quality. Normally the canvas renders at up to 1.5x CSS pixels: the planet is soft and glowy
+  // and all text is HTML, so more density only costs GPU time. "Lite" caps it at 1x, skips the
+  // glow chain and (through html.lite) trades the frosted glass for denser glass. Lite starts on
+  // for touch devices; elsewhere the frame-time governor in the loop below switches it on, then
+  // lowers the resolution further, if frames keep running long.
+  const root = document.documentElement;
+  let lite = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
   const MIN_PIXEL_RATIO = 0.6;
-  let pixelRatio = Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO);
+  const maxPixelRatio = () => Math.min(window.devicePixelRatio, lite ? 1 : 1.5);
+  let pixelRatio = maxPixelRatio();
+  // The drawing buffer follows the canvas's own CSS box (100vw x 100vh), which stays put while a
+  // phone's address bar slides in and out, so scrolling never forces a reallocation.
+  let viewW = canvas.clientWidth || window.innerWidth;
+  let viewH = canvas.clientHeight || window.innerHeight;
   renderer.setPixelRatio(pixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(viewW, viewH, false);
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.VSMShadowMap;
@@ -1055,25 +1106,30 @@ function startPlanet() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
 
-  const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 200);
+  const camera = new THREE.PerspectiveCamera(40, viewW / viewH, 0.1, 200);
   camera.position.set(0, 0, 8);
   camera.layers.enable(LAYERS.TORUS_SCENE);
   camera.layers.enable(LAYERS.BLOOM_SCENE);
   camera.layers.enable(LAYERS.ENTIRE_SCENE);
   scene.add(camera);
 
+  // The lights are on the glow pass's layer too, though nothing drawn there is lit: with the same
+  // light setup in both passes, each material needs one shader program, which can be compiled
+  // ahead of time, and three stops re-wiring the planet's lights every frame.
   const ambient = new THREE.AmbientLight(0xffffff, 1.8);
   ambient.layers.set(LAYERS.ENTIRE_SCENE);
+  ambient.layers.enable(LAYERS.TORUS_SCENE);
   scene.add(ambient);
   const sun = new THREE.DirectionalLight(0xffffff, 0.8);
   sun.position.set(0, 10, 2);
   sun.layers.set(LAYERS.ENTIRE_SCENE);
+  sun.layers.enable(LAYERS.TORUS_SCENE);
   scene.add(sun);
 
   // Shared uniform values. uRes is the drawing-buffer size, so point sprites keep their
   // CSS size at any pixel ratio.
   const res = new THREE.Vector2();
-  const syncRes = () => res.set(window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio());
+  const syncRes = () => renderer.getDrawingBufferSize(res);
   syncRes();
   const planetTime = { value: 0 };
   const cloudTime = { value: 0 };
@@ -1081,14 +1137,15 @@ function startPlanet() {
   const markerTime = { value: 0 };
 
   /* ---------- composers: a render-to-texture chain feeding the final pass ---------- */
-  const viewport = new THREE.Vector2(window.innerWidth, window.innerHeight);
-
+  // (The template ends this chain with a Copy pass so its output always lands in renderTarget1.
+  // The frame loop reads readBuffer instead, so that extra full-screen pass is dropped.)
   const torusComposer = new EffectComposer(renderer);
   torusComposer.renderToScreen = false;
+  const gammaPass = new ShaderPass(GammaCorrectionShader);
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(viewW, viewH), 0.22, 0.2, 0);
   torusComposer.addPass(new RenderPass(scene, camera));
-  torusComposer.addPass(new ShaderPass(GammaCorrectionShader));
-  torusComposer.addPass(new UnrealBloomPass(viewport.clone(), 0.22, 0.2, 0));
-  torusComposer.addPass(new ShaderPass(CopyShader));
+  torusComposer.addPass(gammaPass);
+  torusComposer.addPass(bloomPass);
 
   // The Ascend template also runs a bloom->gamma chain for the BLOOM layer, but nothing on this
   // page renders on that layer (the markers glow through the torus chain above), so it would
@@ -1148,30 +1205,140 @@ function startPlanet() {
   glowMesh.visible = false; // with no planet in front of it the halo would read as a solid disc
   worldGroup.add(glowMesh);
 
-  // Assets arrive at 4000-6000 px, but WebGL1 needs power-of-two sizes for repeat/mipmaps and
-  // three would shrink them on the main thread at first upload, freezing the page. Shrink them
-  // here instead with createImageBitmap, which works off the main thread.
+  /* ---------- textures ---------- */
+  // The planet's maps are 6000 px WebP images. Decoding one and shrinking it to a power of two
+  // (WebGL1 needs that for mipmaps and repeat wrapping) takes a few hundred milliseconds; on the
+  // page's own thread that froze scrolling for over a second in all. Workers do it instead, two
+  // at a time to bound memory, and hand back ImageBitmaps of at most 4096 px (2048 px in lite
+  // mode, which renders at 1x anyway).
   const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  async function toPowerOfTwo(texture, max = 4096) {
-    const img = texture && texture.image;
-    if (!img || typeof createImageBitmap !== 'function') return;
-    const limit = Math.min(max, renderer.capabilities.maxTextureSize);
-    const fit = (n) => Math.min(limit, 2 ** Math.floor(Math.log2(n)));
-    const w = fit(img.width), h = fit(img.height);
-    if (w === img.width && h === img.height) return;
-    try {
-      texture.image = await createImageBitmap(img, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high', premultiplyAlpha: 'none' });
-      texture.needsUpdate = true;
-    } catch { /* three falls back to resizing it on upload */ }
+  const textureLimit = Math.min(lite ? 2048 : 4096, renderer.capabilities.maxTextureSize);
+  const fitPowerOfTwo = (n) => Math.min(textureLimit, 2 ** Math.floor(Math.log2(n)));
+  const TEXTURE_WORKER = `
+    const fit = (n, max) => Math.min(max, 2 ** Math.floor(Math.log2(n)));
+    onmessage = async ({ data: { blob, max, flipY } }) => {
+      try {
+        const options = { premultiplyAlpha: 'none', colorSpaceConversion: 'none' };
+        if (flipY) options.imageOrientation = 'flipY'; // WebGL ignores flipY for ImageBitmaps
+        let bitmap = await createImageBitmap(blob, options);
+        const w = fit(bitmap.width, max), h = fit(bitmap.height, max);
+        if (w !== bitmap.width || h !== bitmap.height) {
+          const full = bitmap;
+          bitmap = await createImageBitmap(full, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high', premultiplyAlpha: 'none' });
+          full.close();
+        }
+        postMessage({ bitmap }, [bitmap]);
+      } catch (error) {
+        postMessage({ error: String(error) });
+      }
+    };`;
+
+  function createDecoder(size) {
+    if (typeof Worker !== 'function' || typeof createImageBitmap !== 'function') return null;
+    const url = URL.createObjectURL(new Blob([TEXTURE_WORKER], { type: 'text/javascript' }));
+    const idle = [];
+    const running = new Map(); // worker -> the job it's on
+    const queue = [];
+    let alive = 0;
+    const dispatch = () => {
+      while (idle.length && queue.length) {
+        const worker = idle.pop();
+        const job = queue.shift();
+        running.set(worker, job);
+        worker.postMessage(job.message);
+      }
+      if (!alive) for (const job of queue.splice(0)) job.reject(new Error('no texture workers'));
+    };
+    for (let i = 0; i < size; i++) {
+      let worker;
+      try { worker = new Worker(url); } catch { continue; }
+      alive++;
+      idle.push(worker);
+      worker.onmessage = ({ data }) => {
+        const job = running.get(worker);
+        running.delete(worker);
+        idle.push(worker);
+        if (data.bitmap) job.resolve(data.bitmap);
+        else job.reject(new Error(data.error));
+        dispatch();
+      };
+      worker.onerror = () => { // it couldn't start (a policy blocking blob: workers, say)
+        alive--;
+        worker.terminate();
+        if (idle.includes(worker)) idle.splice(idle.indexOf(worker), 1);
+        const job = running.get(worker);
+        running.delete(worker);
+        if (job) job.reject(new Error('texture worker failed'));
+        dispatch();
+      };
+    }
+    if (!alive) {
+      URL.revokeObjectURL(url);
+      return null;
+    }
+    return {
+      decode: (blob, flipY = false) => new Promise((resolve, reject) => {
+        queue.push({ message: { blob, max: textureLimit, flipY }, resolve, reject });
+        dispatch();
+      }),
+      dispose() {
+        for (const worker of [...idle, ...running.keys()]) worker.terminate();
+        URL.revokeObjectURL(url);
+      },
+    };
+  }
+  const decoder = createDecoder(lite ? 1 : 2);
+
+  // Where the workers aren't used (Safari, where GLTFLoader avoids ImageBitmaps, or if one
+  // fails), shrink on this thread: still quicker than three's canvas resize at first upload.
+  const resizing = new WeakMap(); // one resize per image source, however many textures share it
+  function toPowerOfTwo(texture) {
+    const source = texture && texture.source;
+    if (!source || !source.data || typeof createImageBitmap !== 'function') return Promise.resolve();
+    if (!resizing.has(source)) {
+      resizing.set(source, (async () => {
+        const img = source.data;
+        const w = fitPowerOfTwo(img.width), h = fitPowerOfTwo(img.height);
+        if (w === img.width && h === img.height) return false;
+        try {
+          source.data = await createImageBitmap(img, { resizeWidth: w, resizeHeight: h, resizeQuality: 'high', premultiplyAlpha: 'none' });
+          if (typeof img.close === 'function') img.close(); // free the full-size decode (~140 MB each) now
+          return true;
+        } catch {
+          return false; // three falls back to resizing it on upload
+        }
+      })());
+    }
+    return resizing.get(source).then((changed) => { if (changed) texture.needsUpdate = true; });
   }
 
   // three drifting cloud shells
-  let resolveCloudTex;
-  const cloudTexLoaded = new Promise((resolve) => { resolveCloudTex = resolve; });
-  const cloudTex = new THREE.TextureLoader().load(PLANET_CLOUDS_PNG, resolveCloudTex, undefined, () => resolveCloudTex(null));
+  const cloudTex = new THREE.Texture();
   cloudTex.wrapS = cloudTex.wrapT = THREE.RepeatWrapping;
   cloudTex.repeat.set(5, 5);
+  const imageFromBlob = (blob) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(img.src); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(img.src); reject(new Error('the cloud image did not decode')); };
+    img.src = URL.createObjectURL(blob);
+  });
+  const cloudTexLoaded = fetch(PLANET_CLOUDS_PNG)
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.blob();
+    })
+    // decoded in a worker if possible; the worker flips it to match an <img> uploaded with flipY
+    .then((blob) => (decoder ? decoder.decode(blob, true) : Promise.reject()).catch(() => imageFromBlob(blob)))
+    .then((image) => {
+      cloudTex.image = image;
+      cloudTex.needsUpdate = true;
+      return cloudTex;
+    })
+    .catch((err) => {
+      console.warn('[portfolio] cloud texture unavailable:', err);
+      return null;
+    });
   const cloudLayers = [
     { h: CONFIG.cloud1Height, o: CONFIG.cloud1Opacity, spinKey: 'cloud1Spin', ry: 0.0, phase: 0.0 },
     { h: CONFIG.cloud2Height, o: CONFIG.cloud2Opacity, spinKey: 'cloud2Spin', ry: 2.2, phase: 13.0 },
@@ -1224,14 +1391,26 @@ function startPlanet() {
   });
   const atmo = new THREE.Points(atmoGeometry, atmoMaterial);
   atmo.frustumCulled = false; // the vertex shader spreads the motes well past their geometry bounds
-  atmo.layers.set(LAYERS.TORUS_SCENE);
+  atmo.layers.set(lite ? LAYERS.ENTIRE_SCENE : LAYERS.TORUS_SCENE);
   atmo.onBeforeRender = () => {
-    const now = performance.now() / 1000;
+    const now = reduceMotion ? 0 : performance.now() / 1000;
     atmoMaterial.uniforms.uTime.value = now * CONFIG.atmoSpeed * 8;
     atmo.position.copy(camera.position);
     finalPass.uniforms.iTime.value = now;
   };
   scene.add(atmo);
+
+  // Lite mode draws the motes and markers straight into the main pass instead of through the
+  // glow chain.
+  let markerPoints = null;
+  const setLite = (on) => {
+    lite = on;
+    root.classList.toggle('lite', on);
+    const layer = on ? LAYERS.ENTIRE_SCENE : LAYERS.TORUS_SCENE;
+    atmo.layers.set(layer);
+    if (markerPoints) markerPoints.layers.set(layer);
+  };
+  setLite(lite);
 
   // twinkling starfield on a sphere of radius 90
   const starPositions = new Float32Array(CONFIG.starCount * 3);
@@ -1270,9 +1449,86 @@ function startPlanet() {
   stars.layers.set(LAYERS.ENTIRE_SCENE);
   scene.add(stars);
 
+  /* ---------- shader compilation ---------- */
+  // three r143 reads a new shader program's uniforms the moment it creates it, and that read waits
+  // for the GPU to finish compiling: about a quarter of a second for the planet's shader, with the
+  // page frozen. So programs are created ahead of use with that first read put off: the GPU
+  // compiles them in the background, and nothing that uses them is drawn until it reports them
+  // done. three builds different programs for drawing into a texture and onto the screen, so each
+  // batch compiles against the kind of target its pass draws into.
+  const compileTarget = finalComposer.renderTarget1;
+  const notYetRead = { seq: [], map: {} };
+  const standIns = (materials) => {
+    const holder = new THREE.Scene();
+    const quad = new THREE.PlaneGeometry(2, 2);
+    for (const material of materials) holder.add(new THREE.Mesh(quad, material));
+    return holder;
+  };
+  async function compileAhead(batches) {
+    const pending = [];
+    const programs = renderer.info.programs;
+    if (parallelCompile) {
+      programs.push = function (...added) { // three's list of programs: catch the new ones
+        for (const program of added) {
+          pending.push({ program, getUniforms: program.getUniforms });
+          program.getUniforms = () => notYetRead;
+        }
+        return Array.prototype.push.apply(this, added);
+      };
+    }
+    camera.layers.set(LAYERS.ENTIRE_SCENE); // so the lights are counted
+    try {
+      for (const [holder, target] of batches) {
+        renderer.setRenderTarget(target);
+        renderer.compile(holder, camera);
+      }
+    } finally {
+      delete programs.push;
+      renderer.setRenderTarget(null);
+    }
+    for (const { program } of pending) {
+      while (!gl.isContextLost() && !gl.getProgramParameter(program.program, parallelCompile.COMPLETION_STATUS_KHR)) {
+        await nextFrame();
+      }
+    }
+    for (const { program, getUniforms } of pending) {
+      program.getUniforms = getUniforms;
+      if (!gl.isContextLost() && !gl.getProgramParameter(program.program, gl.LINK_STATUS)) {
+        console.error('[portfolio] a shader failed to compile:', gl.getProgramInfoLog(program.program));
+      }
+    }
+    // Materials that were handed the stand-in read their real uniforms when next drawn (clearing
+    // the version stamp makes three look their program up again).
+    const fresh = new Set(pending.map(({ program }) => program));
+    for (const [holder] of batches) {
+      holder.traverse((o) => {
+        const props = o.material && renderer.properties.get(o.material);
+        if (props && fresh.has(props.currentProgram)) {
+          props.currentProgram = undefined;
+          props.__version = undefined;
+        }
+      });
+    }
+  }
+
+  // The first frame waits for the opening shaders: the stars, the motes, the clouds and halo
+  // still to come, and the passes that draw them.
+  let rendering = false;
+  const openingBatches = [[scene, compileTarget], [standIns([finalPass.material]), null]];
+  if (!lite) {
+    openingBatches.push([standIns([gammaPass.material, bloomPass.materialHighPassFilter, ...bloomPass.separableBlurMaterials,
+      bloomPass.compositeMaterial, bloomPass.materialCopy]), compileTarget]);
+  }
+  compileAhead(openingBatches)
+    .catch((err) => console.warn('[portfolio] shaders not compiled ahead:', err))
+    .finally(() => { rendering = true; redraw = true; });
+
   /* ---------- planet + land markers ---------- */
   let entryStart = null; // scene-clock time the planet arrived; drives the float-up entrance
   let elapsed = 0;
+  // With reduced motion the scene holds still in its opening pose, so it is drawn only when
+  // something changes (the planet or its clouds arriving, a resize), not on every frame.
+  let redraw = true;
 
   // Area-weighted points on the planet's land: sample triangles by cumulative area,
   // read the base-colour texel at the interpolated UV, reject ocean (blue-dominant) texels.
@@ -1285,7 +1541,7 @@ function startPlanet() {
 
     const iw = img.width || img.naturalWidth;
     const ih = img.height || img.naturalHeight;
-    const k = Math.min(1, 2048 / iw); // classification only needs a modest resolution
+    const k = Math.min(1, 1024 / iw); // classification only needs a modest resolution
     const W = Math.max(1, Math.round(iw * k));
     const H = Math.max(1, Math.round(ih * k));
     const cv = document.createElement('canvas');
@@ -1335,7 +1591,8 @@ function startPlanet() {
       const y = Math.min(H - 1, Math.floor((sv - Math.floor(sv)) * H));
       const o = (y * W + x) * 4;
       const cr = px[o], cg = px[o + 1], cb = px[o + 2];
-      if (cb > cr + 6 && cb > cg + 6) continue; // ocean
+      // ocean: blue-dominant texels, plus the near-black deep ocean that the blue test lets through
+      if ((cb > cr + 6 && cb > cg + 6) || (cb >= cr && cb >= cg && cr + cg + cb < 40)) continue;
       a.fromBufferAttribute(pos, ia);
       b.fromBufferAttribute(pos, ib);
       c.fromBufferAttribute(pos, ic);
@@ -1373,10 +1630,49 @@ function startPlanet() {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     }));
-    // The pings glow through the gamma-first chain. The bloom-then-gamma chain stores faint
-    // tails at 8-bit linear and the gamma lift turns them into blocky colour steps.
-    markers.layers.set(LAYERS.TORUS_SCENE);
+    // The pings glow through the gamma-first chain (in lite mode, the main pass). The template's
+    // bloom-then-gamma chain stores faint tails at 8-bit linear, and the gamma lift turns them
+    // into blocky colour steps.
+    markers.layers.set(lite ? LAYERS.ENTIRE_SCENE : LAYERS.TORUS_SCENE);
+    markerPoints = markers;
     mesh.add(markers);
+  }
+
+  // A 4096 px map is 64 MB. Uploaded in one go it stalls this thread and the GPU process (which
+  // also draws the page) for ~50 ms, a visible hitch, so big ImageBitmaps go up in 4 MB slices, a
+  // slice per frame, into a texture allocated empty; the filled texture replaces the original.
+  const SLICE_BYTES = 4 << 20;
+  async function uploadInSlices(texture) {
+    const bitmap = texture.image;
+    const rows = bitmap ? Math.floor(SLICE_BYTES / (bitmap.width * 4)) : 0;
+    if (typeof ImageBitmap === 'undefined' || !(bitmap instanceof ImageBitmap) || rows >= bitmap.height) {
+      renderer.initTexture(texture);
+      return texture;
+    }
+    const filled = new THREE.DataTexture(null, bitmap.width, bitmap.height);
+    for (const key of ['name', 'encoding', 'wrapS', 'wrapT', 'magFilter', 'minFilter', 'anisotropy', 'generateMipmaps']) {
+      filled[key] = texture[key];
+    }
+    filled.needsUpdate = true;
+    renderer.initTexture(filled); // allocates it empty (and, for an sRGB map, settles its format)
+    const glTexture = renderer.properties.get(filled).__webglTexture;
+    const format = filled.format === THREE._SRGBAFormat ? gl.getExtension('EXT_sRGB').SRGB_ALPHA_EXT : gl.RGBA;
+    for (let y = 0; y < bitmap.height; y += rows) {
+      const slice = await createImageBitmap(bitmap, 0, y, bitmap.width, Math.min(rows, bitmap.height - y), { premultiplyAlpha: 'none' });
+      renderer.state.bindTexture(gl.TEXTURE_2D, glTexture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+      renderer.state.texSubImage2D(gl.TEXTURE_2D, 0, 0, y, format, gl.UNSIGNED_BYTE, slice);
+      slice.close();
+      await nextFrame();
+    }
+    if (filled.generateMipmaps && filled.minFilter !== THREE.NearestFilter && filled.minFilter !== THREE.LinearFilter) {
+      renderer.state.bindTexture(gl.TEXTURE_2D, glTexture);
+      gl.generateMipmap(gl.TEXTURE_2D);
+    }
+    bitmap.close();
+    return filled;
   }
 
   async function setupPlanet(nightTex, gltf) {
@@ -1391,9 +1687,11 @@ function startPlanet() {
     mesh.position.copy(sphere.center).multiplyScalar(-s).applyQuaternion(mesh.quaternion);
 
     const material = mesh.material.clone();
+    material.side = THREE.FrontSide; // the GLB is double-sided; a closed sphere's back faces never show
     material.metalness = 0;
     material.roughness = 1;
     material.envMapIntensity = 0;
+    const nightLights = { value: nightTex };
     material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, {
         time: planetTime,
@@ -1403,7 +1701,7 @@ function startPlanet() {
         speedZ: { value: 2.5 },
         rimColor: { value: hexToVec3(CONFIG.rimColor) },
         rimPower: { value: CONFIG.rimPower },
-        nightBlendTexture: { value: nightTex },
+        nightBlendTexture: nightLights,
         nightLights: { value: CONFIG.nightLights },
         terrainDepth: { value: CONFIG.terrainDepth },
         terrainShade: { value: CONFIG.terrainShade },
@@ -1419,36 +1717,60 @@ function startPlanet() {
     mesh.material = material;
     mesh.layers.set(LAYERS.ENTIRE_SCENE);
 
-    // Shrink the big maps off the main thread, upload them one per frame, and compile the
-    // shaders before the planet appears, so its arrival doesn't stall the page.
-    const textures = new Set([material.map, material.normalMap, material.roughnessMap, material.metalnessMap,
-      material.aoMap, material.emissiveMap, material.bumpMap, nightTex].filter(Boolean));
+    // (toPowerOfTwo only has work to do where the workers weren't used.)
+    const slots = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap'];
+    const textures = new Set([...slots.map((slot) => material[slot]), nightTex].filter(Boolean));
     await Promise.all([...textures].map((texture) => toPowerOfTwo(texture)));
-    const clouds = await Promise.race([cloudTexLoaded, sleep(8000)]);
-    if (clouds) {
-      await toPowerOfTwo(clouds, 2048);
-      textures.add(clouds);
-    }
-    for (const texture of textures) {
-      renderer.initTexture(texture);
-      await nextFrame();
-    }
 
+    // The planet joins the scene hidden, and its shaders compile while its textures go up.
+    mesh.visible = false;
     planetGroup.add(mesh);
     addMarkers(mesh);
-    renderer.compile(scene, camera);
-    await nextFrame();
+    const compiled = compileAhead([[scene, compileTarget]]);
 
+    const cloudTexture = await Promise.race([cloudTexLoaded, sleep(8000)]);
+    if (cloudTexture) {
+      await toPowerOfTwo(cloudTexture);
+      textures.add(cloudTexture);
+    }
+    for (const texture of textures) {
+      const uploaded = await uploadInSlices(texture);
+      for (const slot of slots) if (material[slot] === texture) material[slot] = uploaded;
+      if (nightLights.value === texture) nightLights.value = uploaded;
+      await nextFrame();
+    }
+    await compiled;
+
+    mesh.visible = true;
     cloudGroup.visible = true;
     glowMesh.visible = true;
     entryStart = elapsed;
+    redraw = true;
     document.documentElement.dataset.planet = 'ready'; // a hook for CSS or tests
   }
+  cloudTexLoaded.then(() => { redraw = true; }); // in case the clouds arrive after the planet
 
   const draco = new DRACOLoader();
   draco.setDecoderPath(DRACO_DECODER_PATH);
   const gltfLoader = new GLTFLoader();
   gltfLoader.setDRACOLoader(draco);
+  // GLTFLoader decodes embedded textures as ImageBitmaps wherever it trusts them (everywhere but
+  // Safari), finishing each one on this thread; there, the workers decode them instead.
+  gltfLoader.register((parser) => {
+    if (decoder && parser.textureLoader.isImageBitmapLoader) {
+      parser.textureLoader = {
+        isImageBitmapLoader: true,
+        load(url, onLoad, onProgress, onError) {
+          fetch(url)
+            .then((response) => response.blob())
+            .then((blob) => decoder.decode(blob)
+              .catch(() => createImageBitmap(blob, { premultiplyAlpha: 'none', colorSpaceConversion: 'none' })))
+            .then(onLoad, onError);
+        },
+      };
+    }
+    return { name: 'portfolio_texture_workers' };
+  });
   const loadGLTF = (url) => new Promise((resolve, reject) => gltfLoader.load(url, resolve, undefined, reject));
 
   // The night-lights GLB only donates its texture; fetched alongside the planet.
@@ -1460,30 +1782,42 @@ function startPlanet() {
     })
     .catch((err) => { console.warn('[portfolio] night-lights texture unavailable:', err); return null; });
 
-  Promise.all([nightTexPromise, loadGLTF(PLANET_GLB)])
+  const planetLoaded = Promise.all([nightTexPromise, loadGLTF(PLANET_GLB)])
+    .finally(() => draco.dispose()) // both models are decoded: release the decoder's workers
     .then(([nightTex, gltf]) => setupPlanet(nightTex, gltf))
     .catch((err) => console.error('[portfolio] planet failed to load:', err));
+  if (decoder) Promise.allSettled([planetLoaded, cloudTexLoaded]).then(() => decoder.dispose());
 
   /* ---------- resize ---------- */
   const resize = () => {
-    const w = window.innerWidth, h = window.innerHeight;
-    pixelRatio = Math.min(pixelRatio, window.devicePixelRatio, MAX_PIXEL_RATIO);
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
+    pixelRatio = Math.min(pixelRatio, maxPixelRatio());
+    if (w === viewW && h === viewH && pixelRatio === renderer.getPixelRatio()) return;
+    viewW = w;
+    viewH = h;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setPixelRatio(pixelRatio);
-    renderer.setSize(w, h);
+    renderer.setSize(w, h, false);
     for (const composer of [torusComposer, finalComposer]) {
       composer.setPixelRatio(pixelRatio);
       composer.setSize(w, h);
     }
     syncRes();
   };
+  // Resizing clears the drawing buffer, so it happens at the top of a frame that is about to
+  // render; resizing between frames would put one blank frame on screen.
   let resizeQueued = false;
-  window.addEventListener('resize', () => {
-    if (resizeQueued) return;
-    resizeQueued = true;
-    requestAnimationFrame(() => { resizeQueued = false; resize(); });
-  });
+  window.addEventListener('resize', () => { resizeQueued = true; });
+
+  // The scroll range is kept current on layout changes instead of being read (and possibly
+  // forcing a layout) every frame.
+  let maxScroll = 0;
+  const measureScroll = () => { maxScroll = document.documentElement.scrollHeight - window.innerHeight; };
+  measureScroll();
+  window.addEventListener('resize', measureScroll);
+  if ('ResizeObserver' in window) new ResizeObserver(measureScroll).observe(document.body);
 
   /* ---------- frame loop ---------- */
   const clock = new THREE.Clock();
@@ -1496,15 +1830,17 @@ function startPlanet() {
   const MIN_FRAME_MS = 13;
   let lastRender = 0;
   // Frame-time governor: if most frames across ~1.5 s take longer than 24 ms (under ~40 fps),
-  // render fewer pixels. It starts once the planet has settled in, and never steps back up.
+  // switch to lite mode, and after that render fewer pixels. It starts once the planet has
+  // settled in, and never steps back up.
   let slowFrames = 0, sampledFrames = 0;
   const govern = (frameMs) => {
     if (entryStart === null || elapsed - entryStart < 2.5 || frameMs > 250) return;
     sampledFrames++;
     if (frameMs > 24) slowFrames++;
     if (sampledFrames < 90) return;
-    if (slowFrames > 60 && pixelRatio > MIN_PIXEL_RATIO) {
-      pixelRatio = Math.max(MIN_PIXEL_RATIO, Math.round((pixelRatio - 0.2) * 100) / 100);
+    if (slowFrames > 60) {
+      if (!lite) setLite(true);
+      else pixelRatio = Math.max(MIN_PIXEL_RATIO, Math.round((pixelRatio - 0.2) * 100) / 100);
       resize();
     }
     slowFrames = 0;
@@ -1513,10 +1849,18 @@ function startPlanet() {
 
   const frame = (now) => {
     requestAnimationFrame(frame);
-    if (now - lastRender < MIN_FRAME_MS) return;
+    if (!rendering || now - lastRender < MIN_FRAME_MS) return;
+    if (reduceMotion && !redraw && !resizeQueued) return;
+    redraw = false;
     if (lastRender) govern(now - lastRender);
     lastRender = now;
-    const dt = Math.min(clock.getDelta(), 0.05);
+    if (resizeQueued) {
+      resizeQueued = false;
+      resize();
+    }
+    // Reduced motion: no time passes in the scene, so the spin, the clouds, the twinkle, the
+    // pings and the scroll-driven swing all stay put.
+    const dt = reduceMotion ? 0 : Math.min(clock.getDelta(), 0.05);
     elapsed += dt;
     planetTime.value += dt / 12;
     cloudTime.value += dt / 20;
@@ -1524,10 +1868,9 @@ function startPlanet() {
     markerTime.value += dt;
 
     // scroll progress → damped keyframe targets
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     const pTarget = maxScroll > 0 ? clamp(window.scrollY / maxScroll, 0, 1) : 0;
     curP += (pTarget - curP) * Math.min(1, dt * 4.5);
-    const sideScale = clamp(window.innerWidth / 1200, 0.5, 1);
+    const sideScale = clamp(viewW / 1200, 0.5, 1);
     const k = Math.min(1, dt * 3.2);
     curX += (sample(STOPS_X, curP) * sideScale - curX) * k;
     curY += (sample(STOPS_Y, curP) - curY) * k;
@@ -1552,23 +1895,32 @@ function startPlanet() {
     glowMesh.quaternion.copy(camera.quaternion);
     controls.update();
 
-    camera.layers.set(LAYERS.TORUS_SCENE);
-    torusComposer.render(dt);
-    // read the chain's output from whichever target it last wrote
-    finalPass.uniforms.torusTexture.value = torusComposer.readBuffer.texture;
+    if (lite) {
+      finalPass.uniforms.torusTexture.value = blackTexture;
+    } else {
+      camera.layers.set(LAYERS.TORUS_SCENE);
+      torusComposer.render(dt);
+      // read the chain's output from whichever target it last wrote
+      finalPass.uniforms.torusTexture.value = torusComposer.readBuffer.texture;
+    }
     camera.layers.set(LAYERS.ENTIRE_SCENE);
     finalComposer.render(dt);
   };
   requestAnimationFrame(frame);
 }
 
-try {
-  startPlanet();
-} catch (err) {
-  // No WebGL (or a GPU/driver failure): the page still reads fine on the plain background.
-  console.error('[portfolio] WebGL scene unavailable:', err);
-  document.querySelector('.planet-canvas').style.display = 'none';
-}
+// The planet starts once the page has drawn itself with its fonts, so creating the WebGL context
+// doesn't land on top of the page's own first layout and paint. (The models are preloaded meanwhile.)
+const afterNextPaint = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(afterNextPaint).then(() => {
+  try {
+    startPlanet();
+  } catch (err) {
+    // No WebGL (or a GPU/driver failure): the page still reads fine on the plain background.
+    console.error('[portfolio] WebGL scene unavailable:', err);
+    document.querySelector('.planet-canvas').style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
